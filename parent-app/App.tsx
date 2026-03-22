@@ -1,9 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions, SafeAreaView, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions, SafeAreaView, Alert, ActivityIndicator, Platform } from 'react-native';
 import { io, Socket } from 'socket.io-client';
 
-const API_URL = 'https://swift-weeks-slide.loca.lt'; // Global Tunnel URL
+const API_URL = Platform.OS === 'web' ? 'http://localhost:4000' : 'http://10.0.2.2:4000';
 const { width, height } = Dimensions.get('window');
+
+if (Platform.OS === 'web') {
+  const style = document.createElement('style');
+  style.textContent = `
+    #root, body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    div[role="group"] {
+        height: 100%;
+    }
+  `;
+  document.head.append(style);
+}
 
 const fetchWithTimeout = (url: string, options: any = {}, timeout = 5000) => {
   return Promise.race([

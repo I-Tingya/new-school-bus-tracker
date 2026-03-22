@@ -11,10 +11,24 @@ import * as Location from 'expo-location';
 // ─── CONFIG ────────────────────────────────────────────────────────────────
 // UPDATE THIS to your backend's local IP when testing on a real device.
 // Example: 'http://192.168.1.50:3001'
-const API_URL = 'https://swift-weeks-slide.loca.lt'; // Global Tunnel URL
-
-
+const API_URL = Platform.OS === 'web' ? 'http://localhost:4000' : 'http://10.0.2.2:4000';
 const { width, height } = Dimensions.get('window');
+
+if (Platform.OS === 'web') {
+  const style = document.createElement('style');
+  style.textContent = `
+    #root, body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    div[role="group"] {
+        height: 100%;
+    }
+  `;
+  document.head.append(style);
+}
 
 // ─── COLORS ────────────────────────────────────────────────────────────────
 const C = {

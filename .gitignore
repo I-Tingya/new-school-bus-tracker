@@ -28,3 +28,9 @@ Thumbs.db
 # Environments
 .env*
 !.env.example
+
+# Native Builds
+android/
+**/android/
+ios/
+**/ios/
