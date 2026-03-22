@@ -26,5 +26,7 @@ export class RealtimeGateway implements OnGatewayConnection, OnGatewayDisconnect
 
   broadcastLocation(update: LocationUpdate) {
     this.server.to(`trip_${update.tripId}`).emit('locationUpdate', update);
+    // Also emit globally for admin dashboard
+    this.server.emit('locationUpdate', update);
   }
 }

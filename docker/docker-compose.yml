@@ -24,7 +24,7 @@ services:
       context: ..
       dockerfile: backend/Dockerfile
     ports:
-      - "3000:3000"
+      - "4000:4000"
     environment:
       - DATABASE_URL=postgresql://dev_user:dev_password@postgres:5432/school_bus_tracker
       - REDIS_URL=redis://redis:6379

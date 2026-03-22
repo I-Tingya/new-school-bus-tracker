@@ -30,7 +30,9 @@ export class LocationService {
     });
 
     await this.locationRepo.save(location);
-    this.realtimeGateway.broadcastLocation(update);
+
+    // Broadcast the update merging the actual busId from the DB
+    this.realtimeGateway.broadcastLocation({ ...update, busId: trip.busId } as any);
 
     // Mock Proximity threshold check
     // If bus is within X bounds of a stop, trigger notification

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Tenant } from 'shared-types';
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://localhost:4000';
 
 export default function SuperadminDashboard() {
   const [tenants, setTenants] = useState<Tenant[]>([]);
@@ -203,7 +203,7 @@ const KpiCard = ({ title, value, trend }: { title: string, value: string, trend:
   </div>
 );
 
-const ADMIN_WEB_URL = 'http://localhost:3002';
+const ADMIN_WEB_URL = 'http://localhost:3000';
 
 const TenantRow = ({ id, name, stats, status, rowGray }: { id: string, name: string, stats?: any, status: string, rowGray: boolean }) => (
   <tr style={{ borderTop: '1px solid #E1E8F0', backgroundColor: rowGray ? '#F9FAFB' : 'white' }}>

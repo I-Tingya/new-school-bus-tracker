@@ -1,0 +1,9 @@
+{
+  "expo": {
+    "name": "Parent App",
+    "slug": "parent-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light"
+  }
+}

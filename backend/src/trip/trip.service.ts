@@ -4,6 +4,7 @@ import { Trip } from '../database/entities/tenant/trip.entity';
 import { Bus } from '../database/entities/tenant/bus.entity';
 import { StartTripRequest } from 'shared-types';
 import { NotificationService } from '../notification/notification.service';
+import { RealtimeGateway } from '../realtime/realtime.gateway';
 
 @Injectable()
 export class TripService {
@@ -13,7 +14,18 @@ export class TripService {
     @Inject('BUS_REPOSITORY')
     private readonly busRepo: Repository<Bus>,
     private readonly notificationService: NotificationService,
+    private readonly realtimeGateway: RealtimeGateway,
   ) {}
+
+  async getActiveTripForBus(busId: string) {
+    const activeTrip = await this.tripRepo.findOneBy({ busId, status: 'ACTIVE' });
+    return activeTrip || null;
+  }
+
+  async getActiveTripForRoute(routeId: string) {
+    const activeTrip = await this.tripRepo.findOneBy({ routeId, status: 'ACTIVE' });
+    return activeTrip || null;
+  }
 
   async startTrip(data: StartTripRequest, driverId: string) {
     const bus = await this.busRepo.findOneBy({ id: data.busId });
@@ -34,6 +46,9 @@ export class TripService {
     
     // Trigger notification
     this.notificationService.notifyTripStarted(savedTrip.id, data.routeId);
+    if (this.realtimeGateway.server) {
+      this.realtimeGateway.server.emit('tripStarted', { tripId: savedTrip.id, routeId: data.routeId, busId: data.busId });
+    }
 
     return savedTrip;
   }

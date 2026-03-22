@@ -6,11 +6,12 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Location from 'expo-location';
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
 // UPDATE THIS to your backend's local IP when testing on a real device.
 // Example: 'http://192.168.1.50:3001'
-const API_URL = 'http://192.168.0.18:3000';
+const API_URL = 'https://swift-weeks-slide.loca.lt'; // Global Tunnel URL
 
 
 const { width, height } = Dimensions.get('window');
@@ -33,6 +34,7 @@ const C = {
 
 // ─── TYPES ─────────────────────────────────────────────────────────────────
 interface Tenant { id: string; name: string; dbName: string; }
+interface Bus { id: string; number: string; capacity: number; }
 interface Route { id: string; name: string; stops: string[]; }
 interface Student { id: string; name: string; address: string; }
 
@@ -52,8 +54,18 @@ const api = {
       headers: { 'x-tenant-id': tenantId },
     }).then(r => r.json()),
 
+  getBuses: (tenantId: string): Promise<Bus[]> =>
+    fetchWithTimeout(`${API_URL}/core/buses`, {
+      headers: { 'x-tenant-id': tenantId },
+    }).then(r => r.json()),
+
   getStudents: (tenantId: string): Promise<Student[]> =>
     fetchWithTimeout(`${API_URL}/core/students`, {
+      headers: { 'x-tenant-id': tenantId },
+    }).then(r => r.json()),
+
+  getActiveTrip: (tenantId: string, busId: string): Promise<any> =>
+    fetchWithTimeout(`${API_URL}/trip/active/${busId}`, {
       headers: { 'x-tenant-id': tenantId },
     }).then(r => r.json()),
 
@@ -70,23 +82,34 @@ const api = {
 // ══════════════════════════════════════════════════════════════════════════
 export default function App() {
   const [tenant, setTenant] = useState<Tenant | null>(null);
+  const [bus, setBus] = useState<Bus | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    AsyncStorage.getItem('driver_tenant').then(raw => {
-      if (raw) setTenant(JSON.parse(raw));
+    Promise.all([
+      AsyncStorage.getItem('driver_tenant'),
+      AsyncStorage.getItem('driver_bus')
+    ]).then(([rawT, rawB]) => {
+      if (rawT && rawB) {
+        setTenant(JSON.parse(rawT));
+        setBus(JSON.parse(rawB));
+      }
       setLoading(false);
     });
   }, []);
 
-  const handleLogin = async (t: Tenant) => {
+  const handleLogin = async (t: Tenant, b: Bus) => {
     await AsyncStorage.setItem('driver_tenant', JSON.stringify(t));
+    await AsyncStorage.setItem('driver_bus', JSON.stringify(b));
     setTenant(t);
+    setBus(b);
   };
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('driver_tenant');
+    await AsyncStorage.removeItem('driver_bus');
     setTenant(null);
+    setBus(null);
   };
 
   if (loading) {
@@ -97,32 +120,33 @@ export default function App() {
     );
   }
 
-  return tenant
-    ? <HomeScreen tenant={tenant} onLogout={handleLogout} />
+  return tenant && bus
+    ? <HomeScreen tenant={tenant} bus={bus} onLogout={handleLogout} />
     : <LoginScreen onLogin={handleLogin} />;
 }
 
 // ══════════════════════════════════════════════════════════════════════════
 // LOGIN SCREEN
 // ══════════════════════════════════════════════════════════════════════════
-function LoginScreen({ onLogin }: { onLogin: (t: Tenant) => void }) {
+function LoginScreen({ onLogin }: { onLogin: (t: Tenant, b: Bus) => void }) {
   const [schoolName, setSchoolName] = useState('');
+  const [busNumber, setBusNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleLogin = async () => {
-    if (!schoolName.trim()) { setError('Please enter your school name.'); return; }
+    if (!schoolName.trim() || !busNumber.trim()) { setError('Please enter both school name and bus number.'); return; }
     setLoading(true); setError('');
     try {
       const tenants: Tenant[] = await api.getTenants();
-      const match = tenants.find(
-        t => t.name.toLowerCase() === schoolName.trim().toLowerCase()
-      );
-      if (match) {
-        onLogin(match);
-      } else {
-        setError('School not found. Please check the name and try again.');
-      }
+      const match = tenants.find(t => t.name.toLowerCase() === schoolName.trim().toLowerCase());
+      if (!match) { setError('School not found. Please check the name and try again.'); return; }
+      
+      const buses: Bus[] = await api.getBuses(match.id);
+      const busMatch = buses.find(b => b.number.toLowerCase() === busNumber.trim().toLowerCase());
+      if (!busMatch) { setError(`Bus #${busNumber} not found in this school.`); return; }
+
+      onLogin(match, busMatch);
     } catch {
       setError('Cannot connect to server. Make sure the backend is running.');
     } finally {
@@ -131,75 +155,64 @@ function LoginScreen({ onLogin }: { onLogin: (t: Tenant) => void }) {
   };
 
   return (
-    <SafeAreaView style={login.container}>
+    <SafeAreaView style={login.loginContainer}>
       <StatusBar style="light" />
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, justifyContent: 'center', padding: 32 }}>
-        {/* Logo / Branding */}
-        <View style={login.brandRow}>
-          <View style={login.logoBox}>
-            <Text style={login.logoIcon}>🚍</Text>
-          </View>
-          <Text style={login.brandName}>BusTrack</Text>
-          <Text style={login.brandSub}>Driver Portal</Text>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, justifyContent: 'center', padding: 20 }}>
+        <View style={login.loginCard}>
+          <Text style={login.loginTitle}>Driver Portal</Text>
+          <Text style={login.loginSubtitle}>Confirm school and bus to begin.</Text>
+
+          <TextInput
+            style={login.input}
+            placeholder="School Name (e.g. Springfield)"
+            placeholderTextColor="#9CA3AF"
+            value={schoolName}
+            onChangeText={t => { setSchoolName(t); setError(''); }}
+            autoCapitalize="words"
+            returnKeyType="next"
+          />
+
+          <TextInput
+            style={login.input}
+            placeholder="Bus Number (e.g. 42)"
+            placeholderTextColor="#9CA3AF"
+            value={busNumber}
+            onChangeText={t => { setBusNumber(t); setError(''); }}
+            autoCapitalize="none"
+            onSubmitEditing={handleLogin}
+            returnKeyType="go"
+          />
+
+          {error ? <Text style={login.errorText}>{error}</Text> : null}
+
+          <TouchableOpacity style={login.button} onPress={handleLogin} disabled={loading} activeOpacity={0.85}>
+            {loading ? <ActivityIndicator color="white" /> : <Text style={login.buttonText}>Start Driving</Text>}
+          </TouchableOpacity>
         </View>
-
-        {/* Form */}
-        <Text style={login.label}>SCHOOL NAME</Text>
-        <TextInput
-          style={login.input}
-          placeholder="e.g. Charlottetown Elementary"
-          placeholderTextColor={C.gray400}
-          value={schoolName}
-          onChangeText={t => { setSchoolName(t); setError(''); }}
-          autoCapitalize="words"
-          autoCorrect={false}
-          onSubmitEditing={handleLogin}
-          returnKeyType="go"
-        />
-
-        {error ? <Text style={login.errorText}>{error}</Text> : null}
-
-        <TouchableOpacity
-          style={[login.btn, loading && { opacity: 0.6 }]}
-          onPress={handleLogin}
-          disabled={loading}
-          activeOpacity={0.85}
-        >
-          {loading
-            ? <ActivityIndicator color={C.black} />
-            : <Text style={login.btnText}>Sign In →</Text>
-          }
-        </TouchableOpacity>
-
-        <Text style={login.hint}>Contact your administrator for access.</Text>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const login = StyleSheet.create({
-  container: { flex: 1, backgroundColor: C.black },
-  brandRow: { alignItems: 'center', marginBottom: 56 },
-  logoBox: { width: 80, height: 80, borderRadius: 20, backgroundColor: C.green, justifyContent: 'center', alignItems: 'center', marginBottom: 16 },
-  logoIcon: { fontSize: 40 },
-  brandName: { fontSize: 32, fontWeight: '900', color: C.white, letterSpacing: -1 },
-  brandSub: { fontSize: 14, color: C.gray400, marginTop: 4, letterSpacing: 2, fontWeight: '600' },
-  label: { fontSize: 10, fontWeight: '800', color: C.gray400, letterSpacing: 2, marginBottom: 8 },
-  input: { backgroundColor: C.gray800, borderWidth: 1, borderColor: C.gray600, borderRadius: 12, padding: 18, color: C.white, fontSize: 16, marginBottom: 12 },
-  errorText: { color: C.red, fontSize: 13, marginBottom: 12, textAlign: 'center' },
-  btn: { backgroundColor: C.green, borderRadius: 14, padding: 18, alignItems: 'center', marginBottom: 20 },
-  btnText: { color: C.black, fontSize: 16, fontWeight: '900', letterSpacing: 0.5 },
-  hint: { textAlign: 'center', color: C.gray400, fontSize: 12 },
+  loginContainer: { flex: 1, backgroundColor: '#111827' },
+  loginCard: { backgroundColor: '#1F2937', padding: 32, borderRadius: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.5, shadowRadius: 20, elevation: 10 },
+  loginTitle: { fontSize: 28, fontWeight: '800', color: '#FFFFFF', marginBottom: 8, letterSpacing: -0.5 },
+  loginSubtitle: { fontSize: 15, color: '#9CA3AF', marginBottom: 32, fontWeight: '500' },
+  input: { backgroundColor: '#374151', color: 'white', paddingHorizontal: 16, paddingVertical: 14, borderRadius: 12, fontSize: 16, marginBottom: 16, borderWidth: 1, borderColor: '#4B5563' },
+  button: { backgroundColor: '#10B981', padding: 16, borderRadius: 12, alignItems: 'center', marginTop: 8, shadowColor: '#10B981', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8 },
+  buttonText: { color: 'white', fontWeight: '800', fontSize: 16, letterSpacing: 0.5 },
+  errorText: { color: '#EF4444', fontSize: 13, marginBottom: 12, textAlign: 'center', fontWeight: 'bold' }
 });
 
 // ══════════════════════════════════════════════════════════════════════════
 // HOME SCREEN
 // ══════════════════════════════════════════════════════════════════════════
-function HomeScreen({ tenant, onLogout }: { tenant: Tenant; onLogout: () => void }) {
+function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLogout: () => void }) {
   const [routes, setRoutes] = useState<Route[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [activeRoute, setActiveRoute] = useState<Route | null>(null);
-  const [tripActive, setTripActive] = useState(false);
+  const [tripActive, setTripActive] = useState<string | false>(false);
   const [tripStart, setTripStart] = useState<Date | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   const [showRouteList, setShowRouteList] = useState(false);
@@ -214,9 +227,69 @@ function HomeScreen({ tenant, onLogout }: { tenant: Tenant; onLogout: () => void
   }, []);
 
   useEffect(() => {
-    api.getRoutes(tenant.id).then(setRoutes).catch(() => { });
+    api.getRoutes(tenant.id).then(routesData => {
+      setRoutes(routesData);
+      api.getActiveTrip(tenant.id, bus.id).then(trip => {
+        if (trip && trip.id) {
+          setTripActive(trip.id);
+          const activeR = routesData.find((r: Route) => r.id === trip.routeId);
+          if (activeR) setActiveRoute(activeR);
+          setTripStart(new Date(trip.startedAt));
+        }
+      }).catch(() => {});
+    }).catch(() => { });
     api.getStudents(tenant.id).then(setStudents).catch(() => { });
   }, [tenant.id]);
+
+  useEffect(() => {
+    let sub: Location.LocationSubscription | null = null;
+    let timer: NodeJS.Timeout;
+
+    const startTracking = async () => {
+      let lat = 40.7128;
+      let lng = -74.0060;
+
+      // Try hardware hook if available
+      try {
+        sub = await Location.watchPositionAsync(
+          { accuracy: Location.Accuracy.Balanced, timeInterval: 3000, distanceInterval: 0 },
+          (loc) => {
+            lat = loc.coords.latitude;
+            lng = loc.coords.longitude;
+          }
+        );
+      } catch (e) {
+        console.log('Hardware GPS not active, falling back to simulated coords.');
+      }
+
+      // 3-second simulation loop to guarantee network traversal on emulator
+      timer = setInterval(() => {
+        if (tripActive && typeof tripActive === 'string') {
+          lat += 0.0002;
+          lng += 0.0002;
+          const payload = {
+            driverId: '00000000-0000-0000-0000-000000000000',
+            tripId: tripActive,
+            latitude: lat,
+            longitude: lng,
+            timestamp: new Date().toISOString()
+          };
+          fetchWithTimeout(`${API_URL}/location/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-tenant-id': tenant.id },
+            body: JSON.stringify(payload)
+          }).then(r => console.log('Location Ping ->', r.status))
+            .catch(e => console.log('Location Ping Failed'));
+        }
+      }, 3000);
+    };
+
+    if (tripActive) startTracking();
+    return () => { 
+      if (sub) sub.remove(); 
+      if (timer) clearInterval(timer);
+    };
+  }, [tripActive, tenant.id]);
 
   // Resolve student ID → name
   const resolveStop = (id: string) => students.find(s => s.id === id)?.name ?? id;
@@ -234,12 +307,35 @@ function HomeScreen({ tenant, onLogout }: { tenant: Tenant; onLogout: () => void
     }).start();
   };
 
-  const handleGo = () => {
+  const handleGo = async () => {
     if (!tripActive) {
-      setTripActive(true);
-      setTripStart(new Date());
-      setCurrentStopIdx(0);
+      if (!activeRoute) return Alert.alert('Select a route first');
+      const busId = bus.id;
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') return Alert.alert('Location required.');
+
+        const res = await fetchWithTimeout(`${API_URL}/trip/start`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'x-tenant-id': tenant.id, 'x-driver-id': '00000000-0000-0000-0000-000000000000' },
+            body: JSON.stringify({ busId, routeId: activeRoute.id })
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const trip = await res.json();
+
+        setTripActive(trip.id);
+        setTripStart(new Date());
+        setCurrentStopIdx(0);
+      } catch (err) {
+        Alert.alert('Failed to start trip', String(err));
+      }
     } else {
+      try {
+        await fetchWithTimeout(`${API_URL}/trip/${tripActive}/end`, {
+            method: 'POST',
+            headers: { 'x-tenant-id': tenant.id, 'x-driver-id': '00000000-0000-0000-0000-000000000000' }
+        });
+      } catch (e) {}
       setTripActive(false);
       setTripStart(null);
       setCurrentStopIdx(0);
@@ -425,7 +521,7 @@ function HomeScreen({ tenant, onLogout }: { tenant: Tenant; onLogout: () => void
             <View style={menu.avatar}>
               <Text style={menu.avatarTxt}>🚍</Text>
             </View>
-            <Text style={menu.driverName}>Driver</Text>
+            <Text style={menu.driverName}>Bus {bus.number}</Text>
             <Text style={menu.schoolName}>{tenant.name}</Text>
           </View>
           <View style={menu.divider} />

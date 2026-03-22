@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Next.js
+.next/
+**/ .next/
+
+# Expo
+.expo/
+**/.expo/
+
+# Backend Build
+dist/
+**/dist/
+
+# Logs
+*.log
+system.log
+
+# Shared Types
+shared-types/dist/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Environments
+.env*
+!.env.example

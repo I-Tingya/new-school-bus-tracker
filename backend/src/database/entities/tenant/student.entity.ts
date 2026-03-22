@@ -11,6 +11,9 @@ export class Student {
   @Column({ nullable: true })
   address: string;
 
+  @Column({ nullable: true })
+  grade: string;
+
   @Column({ name: 'parent_id', nullable: true })
   parentId: string;
 

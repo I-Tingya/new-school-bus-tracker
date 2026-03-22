@@ -3,7 +3,7 @@ import { io } from 'socket.io-client';
 import { useRouter } from 'next/router';
 import { Tenant, Student, Bus, Route } from 'shared-types';
 
-const API_BASE_URL = 'http://localhost:3000';
+const API_BASE_URL = 'http://localhost:4000';
 
 type TabType = 'map' | 'vehicles' | 'routes' | 'students';
 
@@ -11,7 +11,7 @@ export default function AdminDashboard() {
   const router = useRouter();
   const { schoolId } = router.query;
   const [school, setSchool] = useState<Tenant | null>(null);
-  const [busesOnline, setBusesOnline] = useState<Record<string, { lat: number, lng: number }>>({});
+  const [busesOnline, setBusesOnline] = useState<Record<string, { lat: number, lng: number, lastSeen: number, numericId?: string }>>({});
   const [activeTab, setActiveTab] = useState<TabType>('map');
 
   // Entity States
@@ -60,13 +60,36 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     const newSocket = io(API_BASE_URL);
+    let activeInterval: NodeJS.Timeout;
+
     newSocket.on('locationUpdate', (data: any) => {
+      const key = data.busId || data.tripId;
       setBusesOnline((prev) => ({
         ...prev,
-        [data.tripId]: { lat: data.latitude, lng: data.longitude }
+        [key]: { lat: data.latitude, lng: data.longitude, lastSeen: Date.now(), numericId: data.busId }
       }));
     });
-    return () => { newSocket.disconnect(); };
+
+    // Auto-purge "ghost" trips if no ping received within 15 seconds
+    activeInterval = setInterval(() => {
+      setBusesOnline((prev) => {
+        const now = Date.now();
+        const next = { ...prev };
+        let changed = false;
+        for (const k in next) {
+          if (now - (next[k].lastSeen || 0) > 15000) {
+            delete next[k];
+            changed = true;
+          }
+        }
+        return changed ? next : prev;
+      });
+    }, 5000);
+
+    return () => { 
+      newSocket.disconnect();
+      clearInterval(activeInterval);
+    };
   }, []);
 
   // Poll for SOS alerts every 5 seconds
@@ -207,7 +230,7 @@ export default function AdminDashboard() {
         </div>
 
         <div style={{ flex: 1, padding: 32, overflowY: 'auto' }}>
-          {activeTab === 'map' && <MapView busesOnline={busesOnline} schoolName={school?.name} />}
+          {activeTab === 'map' && <MapView busesOnline={busesOnline} schoolName={school?.name} buses={buses} />}
           {activeTab === 'vehicles' && <EntityView title="Fleet Management" items={buses} type="vehicles" onAdd={() => setShowModal('vehicles')} onEdit={(it: any) => startEdit('vehicles', it)} onDelete={(it: any) => setDeleteConfirm({type:'vehicles', id: it.id, name: it.number})} />}
           {activeTab === 'routes' && <EntityView title="Route Management" items={routes} type="routes" onAdd={() => setShowModal('routes')} onEdit={(it: any) => startEdit('routes', it)} onDelete={(it: any) => setDeleteConfirm({type:'routes', id: it.id, name: it.name})} />}
           {activeTab === 'students' && <EntityView title="Student Directory" items={students} type="students" onAdd={() => setShowModal('students')} onEdit={(it: any) => startEdit('students', it)} onDelete={(it: any) => setDeleteConfirm({type:'students', id: it.id, name: it.name})} />}
@@ -223,6 +246,7 @@ export default function AdminDashboard() {
             {showModal === 'students' && (
               <>
                 <input placeholder="Student Name" value={newData.name || ''} style={inputStyle} onChange={e => setNewData({...newData, name: e.target.value})} />
+                <input placeholder="Grade (e.g. 5, 10, K)" value={newData.grade || ''} style={inputStyle} onChange={e => setNewData({...newData, grade: e.target.value})} />
                 <input placeholder="Address" value={newData.address || ''} style={inputStyle} onChange={e => setNewData({...newData, address: e.target.value})} />
               </>
             )}
@@ -342,7 +366,7 @@ export default function AdminDashboard() {
   );
 }
 
-const MapView = ({ busesOnline, schoolName }: any) => (
+const MapView = ({ busesOnline, schoolName, buses = [] }: any) => (
   <div style={{ display: 'flex', gap: 32, height: '100%' }}>
     <div style={{ flex: 2, backgroundColor: 'white', borderRadius: 28, border: '1px solid #E5E7EB', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.04)' }}>
       <div style={{ position: 'absolute', top: 24, left: 24, backgroundColor: 'white', padding: '12px 24px', borderRadius: 99, fontWeight: '800', fontSize: 13, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.12)', display: 'flex', alignItems: 'center', gap: 10, zIndex: 10 }}>
@@ -364,17 +388,23 @@ const MapView = ({ busesOnline, schoolName }: any) => (
             <p style={{ fontSize: 15, fontWeight: 500 }}>Waiting for GPS signals...</p>
           </div>
         ) : (
-          Object.entries(busesOnline).map(([id, loc]: any) => (
+          Object.entries(busesOnline).map(([id, loc]: any) => {
+            const busObj = buses.find((b: any) => b.id === id);
+            const displayTitle = busObj ? `BUS ${busObj.number}` : (loc.numericId ? 'BUS TRACKING' : `BUS-${id.substring(0,4).toUpperCase()}`);
+            return (
             <div key={id} style={{ padding: 24, backgroundColor: '#F9FAFB', borderRadius: 20, marginBottom: 20, border: '1px solid #F1F5F9' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <span style={{ fontWeight: 800, fontSize: 14, letterSpacing: '0.05em' }}>BUS-{id.substring(0,4).toUpperCase()}</span>
+                <span style={{ fontWeight: 800, fontSize: 14, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                   {displayTitle}
+                </span>
                 <span style={{ backgroundColor: '#DCFCE7', color: '#166534', padding: '6px 14px', borderRadius: 99, fontSize: 11, fontWeight: '800' }}>ON ROUTE</span>
               </div>
               <div style={{ fontSize: 12, color: '#64748B', fontFamily: 'monospace', letterSpacing: '-0.02em', fontWeight: 600 }}>
                 LOC: {loc.lat.toFixed(5)}, {loc.lng.toFixed(5)}
               </div>
             </div>
-          ))
+          );
+        })
         )}
       </div>
     </div>
@@ -398,6 +428,7 @@ const EntityView = ({ title, items, type, onAdd, onEdit, onDelete }: any) => (
           <thead>
             <tr style={{ textAlign: 'left', backgroundColor: '#F8FAFC' }}>
               <th style={thStyle}>Name/Number</th>
+              {type === 'students' && <th style={thStyle}>Grade</th>}
               {type === 'students' && <th style={thStyle}>Address</th>}
               {type === 'vehicles' && <th style={thStyle}>Capacity</th>}
               {type === 'routes' && <th style={thStyle}>Details</th>}
@@ -408,6 +439,7 @@ const EntityView = ({ title, items, type, onAdd, onEdit, onDelete }: any) => (
             {items.map((item: any, idx: number) => (
               <tr key={item.id} style={{ borderBottom: idx === items.length - 1 ? 'none' : '1px solid #F1F5F9' }}>
                 <td style={tdStyle}>{item.name || item.number}</td>
+                {type === 'students' && <td style={tdStyle}>{item.grade || '-'}</td>}
                 {type === 'students' && <td style={tdStyle}>{item.address || 'N/A'}</td>}
                 {type === 'vehicles' && <td style={tdStyle}>{item.capacity} seats</td>}
                 {type === 'routes' && <td style={tdStyle}>{(item.stops || []).length} Stops</td>}

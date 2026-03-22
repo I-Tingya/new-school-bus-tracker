@@ -10,7 +10,7 @@ export const locationProviders = [
     scope: Scope.REQUEST,
     inject: [REQUEST, TenantConnectionService],
     useFactory: async (req: any, connectionService: TenantConnectionService) => {
-      const tenantId = req.user?.tenantId;
+      const tenantId = req.user?.tenantId || req.headers['x-tenant-id'];
       if (!tenantId) throw new Error('No tenantId');
       const dataSource = await connectionService.getTenantConnection(tenantId);
       return dataSource.getRepository(Location);
@@ -21,7 +21,7 @@ export const locationProviders = [
     scope: Scope.REQUEST,
     inject: [REQUEST, TenantConnectionService],
     useFactory: async (req: any, connectionService: TenantConnectionService) => {
-      const tenantId = req.user?.tenantId;
+      const tenantId = req.user?.tenantId || req.headers['x-tenant-id'];
       if (!tenantId) throw new Error('No tenantId');
       const dataSource = await connectionService.getTenantConnection(tenantId);
       return dataSource.getRepository(Trip);
