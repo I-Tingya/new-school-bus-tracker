@@ -1,0 +1,15 @@
+{
+  "name": "shared-types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types for School Bus Tracker",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "echo 'No start script for types package'"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "parent-app",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "react-native start",
+    "dev": "react-native run-android",
+    "build": "cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "react": "18.2.0",
+    "react-native": "0.74.1",
+    "shared-types": "file:../shared-types"
+  }
+}
