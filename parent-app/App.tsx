@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions, SafeAreaView, Alert, ActivityIndicator, Platform } from 'react-native';
 import { io, Socket } from 'socket.io-client';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL = Platform.OS === 'web' ? 'http://localhost:4000' : 'http://10.0.2.2:4000';
 const { width, height } = Dimensions.get('window');
@@ -38,12 +39,42 @@ const api = {
 export default function App() {
   const [tenant, setTenant] = useState<any>(null);
   const [student, setStudent] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      AsyncStorage.getItem('parent_tenant'),
+      AsyncStorage.getItem('parent_student')
+    ]).then(([t, s]) => {
+      if (t && s) {
+        setTenant(JSON.parse(t));
+        setStudent(JSON.parse(s));
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  const handleLogin = async (t: any, s: any) => {
+    await AsyncStorage.setItem('parent_tenant', JSON.stringify(t));
+    await AsyncStorage.setItem('parent_student', JSON.stringify(s));
+    setTenant(t);
+    setStudent(s);
+  };
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('parent_tenant');
+    await AsyncStorage.removeItem('parent_student');
+    setTenant(null);
+    setStudent(null);
+  };
+
+  if (loading) return <View style={styles.container}><ActivityIndicator color="#10B981" size="large" /></View>;
 
   if (!tenant || !student) {
-    return <LoginScreen onLogin={(t: any, s: any) => { setTenant(t); setStudent(s); }} />;
+    return <LoginScreen onLogin={handleLogin} />;
   }
 
-  return <HomeScreen tenant={tenant} student={student} onLogout={() => { setTenant(null); setStudent(null); }} />;
+  return <HomeScreen tenant={tenant} student={student} onLogout={handleLogout} />;
 }
 
 function LoginScreen({ onLogin }: any) {
@@ -97,9 +128,15 @@ function HomeScreen({ tenant, student, onLogout }: any) {
   const [route, setRoute] = useState<any>(null);
   const [activeTrip, setActiveTrip] = useState<any>(null);
   const [location, setLocation] = useState<any>(null);
+  const activeTripRef = React.useRef<any>(null);
+
+  useEffect(() => {
+    activeTripRef.current = activeTrip;
+  }, [activeTrip]);
 
   useEffect(() => {
     let socket: Socket | null = null;
+    let pollInterval: any = null;
 
     const setup = async () => {
       try {
@@ -108,11 +145,29 @@ function HomeScreen({ tenant, student, onLogout }: any) {
         if (!myRoute) return Alert.alert('Notice', 'Your student has not been assigned to any route in the Admin Dashboard yet.');
         setRoute(myRoute);
 
-        const trip = await api.getActiveTrip(tenant.id, myRoute.id);
-        if (trip && trip.id) setActiveTrip(trip);
+        const checkTrip = async () => {
+           try {
+             const trip = await api.getActiveTrip(tenant.id, myRoute.id);
+             if (trip && trip.id) {
+               setActiveTrip(trip);
+               if (socket) socket.emit('subscribeToTrip', trip.id);
+             } else {
+               setActiveTrip(null);
+             }
+           } catch (e) {}
+        };
+
+        await checkTrip();
+
+        // 10s Polling fallback for high-reliability detection
+        pollInterval = setInterval(checkTrip, 10000);
 
         socket = io(API_URL);
         
+        socket.on('connect', () => {
+           console.log('Parent App Connected to WS');
+        });
+
         socket.on('locationUpdate', (data: any) => {
           setLocation((prev: any) => {
              return { lat: data.latitude, lng: data.longitude, tripId: data.tripId };
@@ -121,8 +176,18 @@ function HomeScreen({ tenant, student, onLogout }: any) {
 
         socket.on('tripStarted', (data: any) => {
           if (data.routeId === myRoute.id) {
-             Alert.alert('Bus is on the way!', 'The bus has started its route.');
+             console.log('Trip Started Event received');
+             Alert.alert('📢 Bus is on the way!', 'The bus driver has started the route. Get to the stop!');
              setActiveTrip({ id: data.tripId });
+             socket?.emit('subscribeToTrip', data.tripId);
+             setLocation(null);
+          }
+        });
+
+        socket.on('tripEnded', (data: any) => {
+          if (activeTripRef.current && data.tripId === activeTripRef.current.id) {
+             Alert.alert('🏁 Trip Ended', 'The bus has completed its route.');
+             setActiveTrip(null);
              setLocation(null);
           }
         });
@@ -133,7 +198,10 @@ function HomeScreen({ tenant, student, onLogout }: any) {
     };
     setup();
 
-    return () => { if (socket) socket.disconnect(); };
+    return () => { 
+      if (socket) socket.disconnect(); 
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [tenant.id, student.id]);
 
   const isTracking = location && activeTrip && location.tripId === activeTrip.id;

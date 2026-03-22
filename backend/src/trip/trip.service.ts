@@ -59,7 +59,13 @@ export class TripService {
 
     trip.status = 'ENDED';
     trip.endedAt = new Date();
-    return this.tripRepo.save(trip);
+    const result = await this.tripRepo.save(trip);
+
+    if (this.realtimeGateway.server) {
+      this.realtimeGateway.server.emit('tripEnded', { tripId: result.id, routeId: result.routeId });
+    }
+
+    return result;
   }
 
   async sos(tripId: string, driverId: string, lat: number, lng: number) {

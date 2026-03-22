@@ -2193,3 +2193,357 @@
 {"context":"InstanceLoader","level":"info","message":"CoreModule dependencies initialized","timestamp":"2026-03-22T18:16:05.204Z"}
 {"context":"InstanceLoader","level":"info","message":"TripModule dependencies initialized","timestamp":"2026-03-22T18:16:05.205Z"}
 {"context":"InstanceLoader","level":"info","message":"LocationModule dependencies initialized","timestamp":"2026-03-22T18:16:05.205Z"}
+{"context":"NestFactory","level":"info","message":"Starting Nest application...","timestamp":"2026-03-22T18:16:10.587Z"}
+{"context":"NotificationService","level":"info","message":"NotificationService initialized (Mock FCM Mode)","timestamp":"2026-03-22T18:16:10.728Z"}
+{"context":"InstanceLoader","level":"info","message":"AppModule dependencies initialized","timestamp":"2026-03-22T18:16:10.731Z"}
+{"context":"InstanceLoader","level":"info","message":"DatabaseModule dependencies initialized","timestamp":"2026-03-22T18:16:10.733Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T18:16:10.734Z"}
+{"context":"InstanceLoader","level":"info","message":"RealtimeModule dependencies initialized","timestamp":"2026-03-22T18:16:10.735Z"}
+{"context":"InstanceLoader","level":"info","message":"PassportModule dependencies initialized","timestamp":"2026-03-22T18:16:10.736Z"}
+{"context":"InstanceLoader","level":"info","message":"NotificationModule dependencies initialized","timestamp":"2026-03-22T18:16:10.737Z"}
+{"context":"InstanceLoader","level":"info","message":"JwtModule dependencies initialized","timestamp":"2026-03-22T18:16:10.738Z"}
+{"context":"InstanceLoader","level":"info","message":"DiscoveryModule dependencies initialized","timestamp":"2026-03-22T18:16:10.739Z"}
+{"context":"InstanceLoader","level":"info","message":"ScheduleModule dependencies initialized","timestamp":"2026-03-22T18:16:10.741Z"}
+{"context":"InstanceLoader","level":"info","message":"CoreModule dependencies initialized","timestamp":"2026-03-22T18:16:10.741Z"}
+{"context":"InstanceLoader","level":"info","message":"TripModule dependencies initialized","timestamp":"2026-03-22T18:16:10.741Z"}
+{"context":"InstanceLoader","level":"info","message":"LocationModule dependencies initialized","timestamp":"2026-03-22T18:16:10.742Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmCoreModule dependencies initialized","timestamp":"2026-03-22T18:16:11.087Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T18:16:11.088Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T18:16:11.088Z"}
+{"context":"InstanceLoader","level":"info","message":"TenantModule dependencies initialized","timestamp":"2026-03-22T18:16:11.090Z"}
+{"context":"InstanceLoader","level":"info","message":"WatchdogModule dependencies initialized","timestamp":"2026-03-22T18:16:11.091Z"}
+{"context":"InstanceLoader","level":"info","message":"AuthModule dependencies initialized","timestamp":"2026-03-22T18:16:11.093Z"}
+{"context":"WebSocketsController","level":"info","message":"RealtimeGateway subscribed to the \"subscribeToTrip\" message","timestamp":"2026-03-22T18:16:11.189Z"}
+{"context":"RoutesResolver","level":"info","message":"TenantController {/tenant}:","timestamp":"2026-03-22T18:16:11.193Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant, POST} route","timestamp":"2026-03-22T18:16:11.203Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant, GET} route","timestamp":"2026-03-22T18:16:11.205Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant/:id, GET} route","timestamp":"2026-03-22T18:16:11.208Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant/stats/students, GET} route","timestamp":"2026-03-22T18:16:11.209Z"}
+{"context":"RoutesResolver","level":"info","message":"AuthController {/auth}:","timestamp":"2026-03-22T18:16:11.209Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/login, POST} route","timestamp":"2026-03-22T18:16:11.210Z"}
+{"context":"RoutesResolver","level":"info","message":"CoreController {/core}:","timestamp":"2026-03-22T18:16:11.211Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students, GET} route","timestamp":"2026-03-22T18:16:11.214Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students, POST} route","timestamp":"2026-03-22T18:16:11.215Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students/:id, PATCH} route","timestamp":"2026-03-22T18:16:11.217Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students/:id, DELETE} route","timestamp":"2026-03-22T18:16:11.218Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses, GET} route","timestamp":"2026-03-22T18:16:11.219Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses, POST} route","timestamp":"2026-03-22T18:16:11.220Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses/:id, PATCH} route","timestamp":"2026-03-22T18:16:11.220Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses/:id, DELETE} route","timestamp":"2026-03-22T18:16:11.221Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes, GET} route","timestamp":"2026-03-22T18:16:11.222Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes, POST} route","timestamp":"2026-03-22T18:16:11.223Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes/:id, PATCH} route","timestamp":"2026-03-22T18:16:11.224Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes/:id, DELETE} route","timestamp":"2026-03-22T18:16:11.225Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts, POST} route","timestamp":"2026-03-22T18:16:11.225Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts, GET} route","timestamp":"2026-03-22T18:16:11.226Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts/:id/resolve, PATCH} route","timestamp":"2026-03-22T18:16:11.227Z"}
+{"context":"RoutesResolver","level":"info","message":"TripController {/trip}:","timestamp":"2026-03-22T18:16:11.227Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/active/:busId, GET} route","timestamp":"2026-03-22T18:16:11.229Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/active/route/:routeId, GET} route","timestamp":"2026-03-22T18:16:11.230Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/start, POST} route","timestamp":"2026-03-22T18:16:11.232Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/:id/end, POST} route","timestamp":"2026-03-22T18:16:11.233Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/:id/sos, POST} route","timestamp":"2026-03-22T18:16:11.234Z"}
+{"context":"RoutesResolver","level":"info","message":"LocationController {/location}:","timestamp":"2026-03-22T18:16:11.234Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/location/update, POST} route","timestamp":"2026-03-22T18:16:11.235Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2026-03-22T18:16:11.269Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: e0ondIvS_etaaEuzAAAB","timestamp":"2026-03-22T18:16:11.542Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T18:16:35.683Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T18:16:35.686Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T18:16:35.693Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T18:16:35.697Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:17:00.015Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:18:00.015Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:19:00.112Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:20:00.014Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:21:00.010Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:22:00.013Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:23:00.027Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:24:00.012Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:25:00.223Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:26:00.012Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:27:00.036Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:28:00.063Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:29:00.006Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:30:00.039Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:31:00.008Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:32:00.135Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:33:00.038Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:34:00.019Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:35:00.060Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:36:00.010Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:37:00.018Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:38:00.025Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:39:00.018Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:40:00.012Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:41:00.016Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:42:00.066Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:43:00.005Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:44:00.029Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:45:00.026Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:46:00.003Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:47:00.013Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:48:00.015Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:49:00.012Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:50:00.016Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:51:00.005Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:52:00.014Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:53:00.016Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:54:00.002Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:55:00.003Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:56:00.003Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:57:00.005Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:58:00.025Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T18:59:00.023Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:00:00.006Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:01:00.008Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:02:00.014Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:03:00.008Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:04:00.010Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:05:00.005Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:06:00.012Z"}
+{"context":"NotificationService","level":"info","message":"Notifying parents for Trip c14f4517-a2e9-40f6-a91c-d8375c363e2e: Route a894c2aa-4bee-45f6-ae40-cfef518ccefa has started.","timestamp":"2026-03-22T19:06:02.026Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] School Bus Update - The bus for a894c2aa-4bee-45f6-ae40-cfef518ccefa has started its trip. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:06:02.027Z"}
+{"context":"NotificationService","level":"info","message":"Notifying parents for Trip 70054ac9-3327-43e3-9acd-6e9003645c4c: Route a894c2aa-4bee-45f6-ae40-cfef518ccefa has started.","timestamp":"2026-03-22T19:06:25.187Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] School Bus Update - The bus for a894c2aa-4bee-45f6-ae40-cfef518ccefa has started its trip. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:06:25.187Z"}
+{"context":"NotificationService","level":"info","message":"Proximity Alert! Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is nearing Stop mock_stop_id","timestamp":"2026-03-22T19:06:31.219Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] Bus Arriving Soon - Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is approaching your stop. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:06:31.220Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client disconnected: e0ondIvS_etaaEuzAAAB","timestamp":"2026-03-22T19:06:34.555Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: agabthOy1eYxNCEaAAAD","timestamp":"2026-03-22T19:06:35.506Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:07:00.013Z"}
+{"context":"NotificationService","level":"info","message":"Proximity Alert! Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is nearing Stop mock_stop_id","timestamp":"2026-03-22T19:07:07.687Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] Bus Arriving Soon - Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is approaching your stop. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:07:07.688Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: k7NdS_DJoyW9s95-AAAF","timestamp":"2026-03-22T19:07:20.672Z"}
+{"context":"NotificationService","level":"info","message":"Notifying parents for Trip 4ee2b7ed-fa77-4057-93f0-f14969bd6669: Route a894c2aa-4bee-45f6-ae40-cfef518ccefa has started.","timestamp":"2026-03-22T19:07:29.265Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] School Bus Update - The bus for a894c2aa-4bee-45f6-ae40-cfef518ccefa has started its trip. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:07:29.265Z"}
+{"context":"NotificationService","level":"info","message":"Notifying parents for Trip 85d5de14-4bf7-4aa2-8d1b-c2c2a9942c20: Route a894c2aa-4bee-45f6-ae40-cfef518ccefa has started.","timestamp":"2026-03-22T19:07:54.166Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] School Bus Update - The bus for a894c2aa-4bee-45f6-ae40-cfef518ccefa has started its trip. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:07:54.166Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:08:00.013Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:09:00.004Z"}
+{"context":"NotificationService","level":"info","message":"Notifying parents for Trip dc939d23-ed77-4271-820f-8bcd4bcd66e0: Route a894c2aa-4bee-45f6-ae40-cfef518ccefa has started.","timestamp":"2026-03-22T19:09:34.293Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] School Bus Update - The bus for a894c2aa-4bee-45f6-ae40-cfef518ccefa has started its trip. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:09:34.293Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:10:00.015Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client disconnected: k7NdS_DJoyW9s95-AAAF","timestamp":"2026-03-22T19:10:54.083Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:11:00.004Z"}
+{"context":"NotificationService","level":"info","message":"Notifying parents for Trip f92c2fe3-bd5b-4454-b32e-0086547ba19e: Route a894c2aa-4bee-45f6-ae40-cfef518ccefa has started.","timestamp":"2026-03-22T19:11:50.620Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] School Bus Update - The bus for a894c2aa-4bee-45f6-ae40-cfef518ccefa has started its trip. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:11:50.620Z"}
+{"context":"NotificationService","level":"info","message":"Proximity Alert! Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is nearing Stop mock_stop_id","timestamp":"2026-03-22T19:11:59.684Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] Bus Arriving Soon - Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is approaching your stop. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:11:59.685Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:12:00.006Z"}
+{"context":"NotificationService","level":"info","message":"Proximity Alert! Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is nearing Stop mock_stop_id","timestamp":"2026-03-22T19:12:08.678Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] Bus Arriving Soon - Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is approaching your stop. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:12:08.678Z"}
+{"context":"NotificationService","level":"info","message":"Proximity Alert! Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is nearing Stop mock_stop_id","timestamp":"2026-03-22T19:12:14.687Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] Bus Arriving Soon - Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is approaching your stop. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:12:14.687Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:13:00.011Z"}
+{"context":"NotificationService","level":"info","message":"Proximity Alert! Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is nearing Stop mock_stop_id","timestamp":"2026-03-22T19:13:08.675Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] Bus Arriving Soon - Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is approaching your stop. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:13:08.675Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: v4BtA_0tkGIdc0NBAAAH","timestamp":"2026-03-22T19:13:52.978Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:14:00.010Z"}
+{"context":"NotificationService","level":"info","message":"Proximity Alert! Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is nearing Stop mock_stop_id","timestamp":"2026-03-22T19:14:53.677Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] Bus Arriving Soon - Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is approaching your stop. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:14:53.677Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:15:00.013Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:16:00.013Z"}
+{"context":"NotificationService","level":"info","message":"Proximity Alert! Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is nearing Stop mock_stop_id","timestamp":"2026-03-22T19:16:35.704Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] Bus Arriving Soon - Bus 64ac44f7-2eb5-40a3-a631-cd4f26bff833 is approaching your stop. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:16:35.704Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:17:00.016Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:18:00.004Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client disconnected: v4BtA_0tkGIdc0NBAAAH","timestamp":"2026-03-22T19:18:49.125Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:19:00.003Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:20:00.010Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:21:00.003Z"}
+{"context":"NestFactory","level":"info","message":"Starting Nest application...","timestamp":"2026-03-22T19:21:29.962Z"}
+{"context":"NotificationService","level":"info","message":"NotificationService initialized (Mock FCM Mode)","timestamp":"2026-03-22T19:21:30.034Z"}
+{"context":"InstanceLoader","level":"info","message":"AppModule dependencies initialized","timestamp":"2026-03-22T19:21:30.037Z"}
+{"context":"InstanceLoader","level":"info","message":"DatabaseModule dependencies initialized","timestamp":"2026-03-22T19:21:30.038Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T19:21:30.038Z"}
+{"context":"InstanceLoader","level":"info","message":"RealtimeModule dependencies initialized","timestamp":"2026-03-22T19:21:30.039Z"}
+{"context":"InstanceLoader","level":"info","message":"PassportModule dependencies initialized","timestamp":"2026-03-22T19:21:30.039Z"}
+{"context":"InstanceLoader","level":"info","message":"NotificationModule dependencies initialized","timestamp":"2026-03-22T19:21:30.040Z"}
+{"context":"InstanceLoader","level":"info","message":"JwtModule dependencies initialized","timestamp":"2026-03-22T19:21:30.041Z"}
+{"context":"InstanceLoader","level":"info","message":"DiscoveryModule dependencies initialized","timestamp":"2026-03-22T19:21:30.041Z"}
+{"context":"InstanceLoader","level":"info","message":"ScheduleModule dependencies initialized","timestamp":"2026-03-22T19:21:30.042Z"}
+{"context":"InstanceLoader","level":"info","message":"CoreModule dependencies initialized","timestamp":"2026-03-22T19:21:30.042Z"}
+{"context":"InstanceLoader","level":"info","message":"TripModule dependencies initialized","timestamp":"2026-03-22T19:21:30.042Z"}
+{"context":"InstanceLoader","level":"info","message":"LocationModule dependencies initialized","timestamp":"2026-03-22T19:21:30.043Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmCoreModule dependencies initialized","timestamp":"2026-03-22T19:21:30.175Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T19:21:30.175Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T19:21:30.175Z"}
+{"context":"InstanceLoader","level":"info","message":"TenantModule dependencies initialized","timestamp":"2026-03-22T19:21:30.176Z"}
+{"context":"InstanceLoader","level":"info","message":"WatchdogModule dependencies initialized","timestamp":"2026-03-22T19:21:30.176Z"}
+{"context":"InstanceLoader","level":"info","message":"AuthModule dependencies initialized","timestamp":"2026-03-22T19:21:30.177Z"}
+{"context":"WebSocketsController","level":"info","message":"RealtimeGateway subscribed to the \"subscribeToTrip\" message","timestamp":"2026-03-22T19:21:30.221Z"}
+{"context":"RoutesResolver","level":"info","message":"TenantController {/tenant}:","timestamp":"2026-03-22T19:21:30.222Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant, POST} route","timestamp":"2026-03-22T19:21:30.224Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant, GET} route","timestamp":"2026-03-22T19:21:30.225Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant/:id, GET} route","timestamp":"2026-03-22T19:21:30.225Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant/stats/students, GET} route","timestamp":"2026-03-22T19:21:30.225Z"}
+{"context":"RoutesResolver","level":"info","message":"AuthController {/auth}:","timestamp":"2026-03-22T19:21:30.226Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/login, POST} route","timestamp":"2026-03-22T19:21:30.226Z"}
+{"context":"RoutesResolver","level":"info","message":"CoreController {/core}:","timestamp":"2026-03-22T19:21:30.226Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students, GET} route","timestamp":"2026-03-22T19:21:30.227Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students, POST} route","timestamp":"2026-03-22T19:21:30.227Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students/:id, PATCH} route","timestamp":"2026-03-22T19:21:30.228Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students/:id, DELETE} route","timestamp":"2026-03-22T19:21:30.228Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses, GET} route","timestamp":"2026-03-22T19:21:30.229Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses, POST} route","timestamp":"2026-03-22T19:21:30.229Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses/:id, PATCH} route","timestamp":"2026-03-22T19:21:30.230Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses/:id, DELETE} route","timestamp":"2026-03-22T19:21:30.230Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes, GET} route","timestamp":"2026-03-22T19:21:30.230Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes, POST} route","timestamp":"2026-03-22T19:21:30.231Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes/:id, PATCH} route","timestamp":"2026-03-22T19:21:30.231Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes/:id, DELETE} route","timestamp":"2026-03-22T19:21:30.231Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts, POST} route","timestamp":"2026-03-22T19:21:30.232Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts, GET} route","timestamp":"2026-03-22T19:21:30.232Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts/:id/resolve, PATCH} route","timestamp":"2026-03-22T19:21:30.232Z"}
+{"context":"RoutesResolver","level":"info","message":"TripController {/trip}:","timestamp":"2026-03-22T19:21:30.232Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/active/:busId, GET} route","timestamp":"2026-03-22T19:21:30.233Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/active/route/:routeId, GET} route","timestamp":"2026-03-22T19:21:30.233Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/start, POST} route","timestamp":"2026-03-22T19:21:30.233Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/:id/end, POST} route","timestamp":"2026-03-22T19:21:30.234Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/:id/sos, POST} route","timestamp":"2026-03-22T19:21:30.234Z"}
+{"context":"RoutesResolver","level":"info","message":"LocationController {/location}:","timestamp":"2026-03-22T19:21:30.234Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/location/update, POST} route","timestamp":"2026-03-22T19:21:30.235Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2026-03-22T19:21:30.245Z"}
+{"context":"NestFactory","level":"info","message":"Starting Nest application...","timestamp":"2026-03-22T19:21:32.232Z"}
+{"context":"NotificationService","level":"info","message":"NotificationService initialized (Mock FCM Mode)","timestamp":"2026-03-22T19:21:32.286Z"}
+{"context":"InstanceLoader","level":"info","message":"AppModule dependencies initialized","timestamp":"2026-03-22T19:21:32.289Z"}
+{"context":"InstanceLoader","level":"info","message":"DatabaseModule dependencies initialized","timestamp":"2026-03-22T19:21:32.290Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T19:21:32.291Z"}
+{"context":"InstanceLoader","level":"info","message":"RealtimeModule dependencies initialized","timestamp":"2026-03-22T19:21:32.292Z"}
+{"context":"InstanceLoader","level":"info","message":"PassportModule dependencies initialized","timestamp":"2026-03-22T19:21:32.292Z"}
+{"context":"InstanceLoader","level":"info","message":"NotificationModule dependencies initialized","timestamp":"2026-03-22T19:21:32.292Z"}
+{"context":"InstanceLoader","level":"info","message":"JwtModule dependencies initialized","timestamp":"2026-03-22T19:21:32.293Z"}
+{"context":"InstanceLoader","level":"info","message":"DiscoveryModule dependencies initialized","timestamp":"2026-03-22T19:21:32.295Z"}
+{"context":"InstanceLoader","level":"info","message":"ScheduleModule dependencies initialized","timestamp":"2026-03-22T19:21:32.296Z"}
+{"context":"InstanceLoader","level":"info","message":"CoreModule dependencies initialized","timestamp":"2026-03-22T19:21:32.296Z"}
+{"context":"InstanceLoader","level":"info","message":"TripModule dependencies initialized","timestamp":"2026-03-22T19:21:32.296Z"}
+{"context":"InstanceLoader","level":"info","message":"LocationModule dependencies initialized","timestamp":"2026-03-22T19:21:32.296Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmCoreModule dependencies initialized","timestamp":"2026-03-22T19:21:32.419Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T19:21:32.419Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T19:21:32.419Z"}
+{"context":"InstanceLoader","level":"info","message":"TenantModule dependencies initialized","timestamp":"2026-03-22T19:21:32.420Z"}
+{"context":"InstanceLoader","level":"info","message":"WatchdogModule dependencies initialized","timestamp":"2026-03-22T19:21:32.420Z"}
+{"context":"InstanceLoader","level":"info","message":"AuthModule dependencies initialized","timestamp":"2026-03-22T19:21:32.421Z"}
+{"context":"WebSocketsController","level":"info","message":"RealtimeGateway subscribed to the \"subscribeToTrip\" message","timestamp":"2026-03-22T19:21:32.457Z"}
+{"context":"RoutesResolver","level":"info","message":"TenantController {/tenant}:","timestamp":"2026-03-22T19:21:32.460Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant, POST} route","timestamp":"2026-03-22T19:21:32.463Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant, GET} route","timestamp":"2026-03-22T19:21:32.464Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant/:id, GET} route","timestamp":"2026-03-22T19:21:32.464Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant/stats/students, GET} route","timestamp":"2026-03-22T19:21:32.465Z"}
+{"context":"RoutesResolver","level":"info","message":"AuthController {/auth}:","timestamp":"2026-03-22T19:21:32.465Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/login, POST} route","timestamp":"2026-03-22T19:21:32.466Z"}
+{"context":"RoutesResolver","level":"info","message":"CoreController {/core}:","timestamp":"2026-03-22T19:21:32.466Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students, GET} route","timestamp":"2026-03-22T19:21:32.466Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students, POST} route","timestamp":"2026-03-22T19:21:32.467Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students/:id, PATCH} route","timestamp":"2026-03-22T19:21:32.467Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students/:id, DELETE} route","timestamp":"2026-03-22T19:21:32.468Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses, GET} route","timestamp":"2026-03-22T19:21:32.468Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses, POST} route","timestamp":"2026-03-22T19:21:32.468Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses/:id, PATCH} route","timestamp":"2026-03-22T19:21:32.469Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses/:id, DELETE} route","timestamp":"2026-03-22T19:21:32.469Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes, GET} route","timestamp":"2026-03-22T19:21:32.469Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes, POST} route","timestamp":"2026-03-22T19:21:32.470Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes/:id, PATCH} route","timestamp":"2026-03-22T19:21:32.470Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes/:id, DELETE} route","timestamp":"2026-03-22T19:21:32.470Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts, POST} route","timestamp":"2026-03-22T19:21:32.471Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts, GET} route","timestamp":"2026-03-22T19:21:32.471Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts/:id/resolve, PATCH} route","timestamp":"2026-03-22T19:21:32.471Z"}
+{"context":"RoutesResolver","level":"info","message":"TripController {/trip}:","timestamp":"2026-03-22T19:21:32.471Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/active/:busId, GET} route","timestamp":"2026-03-22T19:21:32.472Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/active/route/:routeId, GET} route","timestamp":"2026-03-22T19:21:32.472Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/start, POST} route","timestamp":"2026-03-22T19:21:32.472Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/:id/end, POST} route","timestamp":"2026-03-22T19:21:32.473Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/:id/sos, POST} route","timestamp":"2026-03-22T19:21:32.473Z"}
+{"context":"RoutesResolver","level":"info","message":"LocationController {/location}:","timestamp":"2026-03-22T19:21:32.474Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/location/update, POST} route","timestamp":"2026-03-22T19:21:32.474Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2026-03-22T19:21:32.486Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:21:36.000Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:21:36.003Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:21:36.008Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:21:36.011Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: I5EZ5Ieur__FJkU_AAAB","timestamp":"2026-03-22T19:21:36.020Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:22:00.009Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: wCAvW7icVCINs0ZlAAAD","timestamp":"2026-03-22T19:22:44.779Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client disconnected: wCAvW7icVCINs0ZlAAAD","timestamp":"2026-03-22T19:22:50.193Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: SPjzc62lc8_bw9sZAAAF","timestamp":"2026-03-22T19:22:50.481Z"}
+{"context":"NotificationService","level":"info","message":"Notifying parents for Trip f0c21196-98f9-4f28-b6f0-8eee3fa1d357: Route a894c2aa-4bee-45f6-ae40-cfef518ccefa has started.","timestamp":"2026-03-22T19:22:57.442Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] School Bus Update - The bus for a894c2aa-4bee-45f6-ae40-cfef518ccefa has started its trip. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:22:57.442Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client SPjzc62lc8_bw9sZAAAF joined room trip_f0c21196-98f9-4f28-b6f0-8eee3fa1d357","timestamp":"2026-03-22T19:22:57.450Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:23:00.012Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client SPjzc62lc8_bw9sZAAAF joined room trip_f0c21196-98f9-4f28-b6f0-8eee3fa1d357","timestamp":"2026-03-22T19:23:00.690Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client SPjzc62lc8_bw9sZAAAF joined room trip_f0c21196-98f9-4f28-b6f0-8eee3fa1d357","timestamp":"2026-03-22T19:23:10.677Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client disconnected: SPjzc62lc8_bw9sZAAAF","timestamp":"2026-03-22T19:23:58.599Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: 4_tNrYvlWDDfbXjVAAAH","timestamp":"2026-03-22T19:23:58.880Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client disconnected: 4_tNrYvlWDDfbXjVAAAH","timestamp":"2026-03-22T19:23:59.849Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:24:00.019Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: eRQ0vUm4BLf4FV8hAAAJ","timestamp":"2026-03-22T19:24:00.164Z"}
+{"context":"NotificationService","level":"info","message":"Notifying parents for Trip 482ff8d0-1f10-40cb-9a72-589d7f17fd26: Route a894c2aa-4bee-45f6-ae40-cfef518ccefa has started.","timestamp":"2026-03-22T19:24:04.081Z"}
+{"context":"NotificationService","level":"info","message":"[PUSH] School Bus Update - The bus for a894c2aa-4bee-45f6-ae40-cfef518ccefa has started its trip. (To: mock-parent-device-token)","timestamp":"2026-03-22T19:24:04.081Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client eRQ0vUm4BLf4FV8hAAAJ joined room trip_482ff8d0-1f10-40cb-9a72-589d7f17fd26","timestamp":"2026-03-22T19:24:04.085Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client eRQ0vUm4BLf4FV8hAAAJ joined room trip_482ff8d0-1f10-40cb-9a72-589d7f17fd26","timestamp":"2026-03-22T19:24:10.706Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client disconnected: eRQ0vUm4BLf4FV8hAAAJ","timestamp":"2026-03-22T19:24:55.101Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: IS37lVr6jvGlPRGXAAAL","timestamp":"2026-03-22T19:24:55.386Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:25:00.009Z"}
+{"context":"WatchdogService","level":"info","message":"Watchdog running: Checking for offline drivers...","timestamp":"2026-03-22T19:26:00.004Z"}
+{"context":"NestFactory","level":"info","message":"Starting Nest application...","timestamp":"2026-03-22T19:27:00.401Z"}
+{"context":"NotificationService","level":"info","message":"NotificationService initialized (Mock FCM Mode)","timestamp":"2026-03-22T19:27:00.503Z"}
+{"context":"InstanceLoader","level":"info","message":"AppModule dependencies initialized","timestamp":"2026-03-22T19:27:00.517Z"}
+{"context":"InstanceLoader","level":"info","message":"DatabaseModule dependencies initialized","timestamp":"2026-03-22T19:27:00.518Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T19:27:00.521Z"}
+{"context":"InstanceLoader","level":"info","message":"RealtimeModule dependencies initialized","timestamp":"2026-03-22T19:27:00.523Z"}
+{"context":"InstanceLoader","level":"info","message":"PassportModule dependencies initialized","timestamp":"2026-03-22T19:27:00.525Z"}
+{"context":"InstanceLoader","level":"info","message":"NotificationModule dependencies initialized","timestamp":"2026-03-22T19:27:00.527Z"}
+{"context":"InstanceLoader","level":"info","message":"JwtModule dependencies initialized","timestamp":"2026-03-22T19:27:00.529Z"}
+{"context":"InstanceLoader","level":"info","message":"DiscoveryModule dependencies initialized","timestamp":"2026-03-22T19:27:00.537Z"}
+{"context":"InstanceLoader","level":"info","message":"ScheduleModule dependencies initialized","timestamp":"2026-03-22T19:27:00.543Z"}
+{"context":"InstanceLoader","level":"info","message":"CoreModule dependencies initialized","timestamp":"2026-03-22T19:27:00.544Z"}
+{"context":"InstanceLoader","level":"info","message":"TripModule dependencies initialized","timestamp":"2026-03-22T19:27:00.549Z"}
+{"context":"InstanceLoader","level":"info","message":"LocationModule dependencies initialized","timestamp":"2026-03-22T19:27:00.550Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmCoreModule dependencies initialized","timestamp":"2026-03-22T19:27:00.777Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T19:27:00.778Z"}
+{"context":"InstanceLoader","level":"info","message":"TypeOrmModule dependencies initialized","timestamp":"2026-03-22T19:27:00.778Z"}
+{"context":"InstanceLoader","level":"info","message":"TenantModule dependencies initialized","timestamp":"2026-03-22T19:27:00.779Z"}
+{"context":"InstanceLoader","level":"info","message":"WatchdogModule dependencies initialized","timestamp":"2026-03-22T19:27:00.779Z"}
+{"context":"InstanceLoader","level":"info","message":"AuthModule dependencies initialized","timestamp":"2026-03-22T19:27:00.779Z"}
+{"context":"WebSocketsController","level":"info","message":"RealtimeGateway subscribed to the \"subscribeToTrip\" message","timestamp":"2026-03-22T19:27:00.822Z"}
+{"context":"RoutesResolver","level":"info","message":"TenantController {/tenant}:","timestamp":"2026-03-22T19:27:00.825Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant, POST} route","timestamp":"2026-03-22T19:27:00.830Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant, GET} route","timestamp":"2026-03-22T19:27:00.830Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant/:id, GET} route","timestamp":"2026-03-22T19:27:00.831Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/tenant/stats/students, GET} route","timestamp":"2026-03-22T19:27:00.832Z"}
+{"context":"RoutesResolver","level":"info","message":"AuthController {/auth}:","timestamp":"2026-03-22T19:27:00.833Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/auth/login, POST} route","timestamp":"2026-03-22T19:27:00.833Z"}
+{"context":"RoutesResolver","level":"info","message":"CoreController {/core}:","timestamp":"2026-03-22T19:27:00.834Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students, GET} route","timestamp":"2026-03-22T19:27:00.834Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students, POST} route","timestamp":"2026-03-22T19:27:00.835Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students/:id, PATCH} route","timestamp":"2026-03-22T19:27:00.835Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/students/:id, DELETE} route","timestamp":"2026-03-22T19:27:00.835Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses, GET} route","timestamp":"2026-03-22T19:27:00.836Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses, POST} route","timestamp":"2026-03-22T19:27:00.836Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses/:id, PATCH} route","timestamp":"2026-03-22T19:27:00.836Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/buses/:id, DELETE} route","timestamp":"2026-03-22T19:27:00.836Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes, GET} route","timestamp":"2026-03-22T19:27:00.836Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes, POST} route","timestamp":"2026-03-22T19:27:00.837Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes/:id, PATCH} route","timestamp":"2026-03-22T19:27:00.837Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/routes/:id, DELETE} route","timestamp":"2026-03-22T19:27:00.837Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts, POST} route","timestamp":"2026-03-22T19:27:00.837Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts, GET} route","timestamp":"2026-03-22T19:27:00.838Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/core/alerts/:id/resolve, PATCH} route","timestamp":"2026-03-22T19:27:00.838Z"}
+{"context":"RoutesResolver","level":"info","message":"TripController {/trip}:","timestamp":"2026-03-22T19:27:00.838Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/active/:busId, GET} route","timestamp":"2026-03-22T19:27:00.838Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/active/route/:routeId, GET} route","timestamp":"2026-03-22T19:27:00.839Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/start, POST} route","timestamp":"2026-03-22T19:27:00.841Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/:id/end, POST} route","timestamp":"2026-03-22T19:27:00.841Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/trip/:id/sos, POST} route","timestamp":"2026-03-22T19:27:00.843Z"}
+{"context":"RoutesResolver","level":"info","message":"LocationController {/location}:","timestamp":"2026-03-22T19:27:00.843Z"}
+{"context":"RouterExplorer","level":"info","message":"Mapped {/location/update, POST} route","timestamp":"2026-03-22T19:27:00.844Z"}
+{"context":"NestApplication","level":"info","message":"Nest application successfully started","timestamp":"2026-03-22T19:27:00.860Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: AkYnxDINzQEXD_uwAAAC","timestamp":"2026-03-22T19:27:00.912Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:27:00.921Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:27:00.926Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:27:00.929Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:27:00.930Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:27:00.945Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:27:00.947Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:27:00.949Z"}
+{"context":"TenantConnectionService","level":"info","message":"Creating new DataSource for tenant: 8aa0f49a-d98a-447a-a7df-6709d799816e (DB: school_8aa0f49a_d98a_447a_a7df_6709d799816e)","timestamp":"2026-03-22T19:27:00.951Z"}
+{"context":"RealtimeGateway","level":"info","message":"Client connected: 75c7ZGpNWu4l5YvcAAAE","timestamp":"2026-03-22T19:27:01.302Z"}
