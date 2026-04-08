@@ -4,11 +4,12 @@ import { Tenant } from '../database/entities/global/tenant.entity';
 import { TenantService } from './tenant.service';
 import { TenantConnectionService } from './tenant-connection.service';
 import { TenantController } from './tenant.controller';
+import { GeocodingService } from '../core/geocoding.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Tenant], 'global')],
-  providers: [TenantService, TenantConnectionService],
+  providers: [TenantService, TenantConnectionService, GeocodingService],
   controllers: [TenantController],
-  exports: [TenantService, TenantConnectionService],
+  exports: [TenantService, TenantConnectionService, GeocodingService],
 })
 export class TenantModule {}

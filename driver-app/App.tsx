@@ -7,11 +7,13 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
+import { DriverMap } from './components/DriverMap';
+import { Coordinates, BusMarker } from 'shared-types';
 
 // ─── CONFIG ────────────────────────────────────────────────────────────────
 // UPDATE THIS to your backend's local IP when testing on a real device.
 // Example: 'http://192.168.1.50:3001'
-const API_URL = Platform.OS === 'web' ? 'http://localhost:4000' : 'http://10.0.2.2:4000';
+const API_URL = Platform.OS === 'web' ? 'http://localhost:4000' : 'http://192.168.0.15:4000';
 const { width, height } = Dimensions.get('window');
 
 if (Platform.OS === 'web') {
@@ -50,7 +52,7 @@ const C = {
 interface Tenant { id: string; name: string; dbName: string; }
 interface Bus { id: string; number: string; capacity: number; }
 interface Route { id: string; name: string; stops: string[]; }
-interface Student { id: string; name: string; address: string; }
+interface Student { id: string; name: string; address: string; latitude?: number; longitude?: number; }
 
 // ─── API HELPERS ───────────────────────────────────────────────────────────
 const fetchWithTimeout = (url: string, options: RequestInit = {}, ms = 8000): Promise<Response> => {
@@ -233,7 +235,20 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
   const [showSos, setShowSos] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [currentStopIdx, setCurrentStopIdx] = useState(0);
+  const [currentLocation, setCurrentLocation] = useState<(Coordinates & BusMarker) | null>(null);
   const menuAnim = useRef(new Animated.Value(-width * 0.78)).current;
+
+  const orderedRouteStudents = activeRoute?.stops
+    .map(stopId => students.find(student => student.id === stopId))
+    .filter((student): student is Student => !!student) || [];
+
+  // Debug logging
+  useEffect(() => {
+    console.log('HomeScreen Debug:');
+    console.log('- Active Route:', activeRoute?.name, 'Stops:', activeRoute?.stops);
+    console.log('- Total Students loaded:', students.length);
+    console.log('- Ordered Route Students:', orderedRouteStudents.length);
+  }, [activeRoute, students]);
 
   useEffect(() => {
     const id = setInterval(() => setCurrentTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })), 10000);
@@ -270,6 +285,16 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
           (loc) => {
             lat = loc.coords.latitude;
             lng = loc.coords.longitude;
+            // Update current location state with BusMarker data
+            setCurrentLocation({
+              latitude: lat,
+              longitude: lng,
+              busNumber: bus.number,
+              busId: bus.id,
+              driverId: '00000000-0000-0000-0000-000000000000',
+              timestamp: new Date().toISOString(),
+              tripId: typeof tripActive === 'string' ? tripActive : undefined
+            });
           }
         );
       } catch (e) {
@@ -281,6 +306,18 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
         if (tripActive && typeof tripActive === 'string') {
           lat += 0.0002;
           lng += 0.0002;
+          
+          // Update location state
+          setCurrentLocation({
+            latitude: lat,
+            longitude: lng,
+            busNumber: bus.number,
+            busId: bus.id,
+            driverId: '00000000-0000-0000-0000-000000000000',
+            timestamp: new Date().toISOString(),
+            tripId: tripActive
+          });
+          
           const payload = {
             driverId: '00000000-0000-0000-0000-000000000000',
             tripId: tripActive,
@@ -303,7 +340,7 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
       if (sub) sub.remove(); 
       if (timer) clearInterval(timer);
     };
-  }, [tripActive, tenant.id]);
+  }, [tripActive, tenant.id, bus.id, bus.number]);
 
   // Resolve student ID → name
   const resolveStop = (id: string) => students.find(s => s.id === id)?.name ?? id;
@@ -377,17 +414,28 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
     <View style={{ flex: 1, backgroundColor: C.black }}>
       <StatusBar style="light" />
 
-      {/* MAP BG */}
-      <View style={home.mapBg}>
-        {[...Array(18)].map((_, i) => (
-          <View key={i} style={[home.gridRow, { opacity: 0.9 - i * 0.05 }]} />
-        ))}
-        {tripActive && (
-          <View style={home.tripBadge}>
-            <View style={home.tripDot} />
-            <Text style={home.tripBadgeText}>TRIP ACTIVE • {elapsed}</Text>
+      {/* MAP */}
+      <View style={home.mapContainer}>
+        {currentLocation && tripActive ? (
+          <DriverMap
+            currentLocation={currentLocation}
+            tripStatus={tripActive ? 'ACTIVE' : 'ENDED'}
+            students={orderedRouteStudents}
+          />
+        ) : (
+          <View style={home.mapBg}>
+            {[...Array(18)].map((_, i) => (
+              <View key={i} style={[home.gridRow, { opacity: 0.9 - i * 0.05 }]} />
+            ))}
+            {!tripActive && (
+              <View style={home.emptyMapPlaceholder}>
+                <Text style={home.emptyMapIcon}>🗺️</Text>
+                <Text style={home.emptyMapText}>Start a trip to see live map</Text>
+              </View>
+            )}
           </View>
         )}
+
       </View>
 
       <SafeAreaView style={{ flex: 1 }}>
@@ -446,6 +494,12 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
             <Text style={home.nextStopName}>
               {nextStop ? resolveStop(nextStop) : (activeRoute ? 'All stops complete!' : 'Select a route first')}
             </Text>
+            {tripActive && nextStop && (() => {
+              const nextStudent = students.find(s => s.id === nextStop);
+              return nextStudent?.address ? (
+                <Text style={home.nextStopAddress}>{nextStudent.address}</Text>
+              ) : null;
+            })()}
             {tripActive && <Text style={home.nextStopHint}>Tap to mark as visited →</Text>}
           </View>
         </TouchableOpacity>
@@ -565,8 +619,21 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
 
 // ─── HOME STYLES ──────────────────────────────────────────────────────────
 const home = StyleSheet.create({
+  mapContainer: { 
+    ...StyleSheet.absoluteFillObject, 
+    backgroundColor: '#111', 
+    overflow: 'hidden',
+    zIndex: 0
+  },
   mapBg: { ...StyleSheet.absoluteFillObject, backgroundColor: '#111', overflow: 'hidden' },
   gridRow: { height: 1, backgroundColor: '#2a2a2a', marginBottom: 55, width: '100%' },
+  emptyMapPlaceholder: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  emptyMapIcon: { fontSize: 48, marginBottom: 12 },
+  emptyMapText: { color: '#999', fontSize: 14, fontWeight: '600' },
   tripBadge: { position: 'absolute', top: height * 0.4, alignSelf: 'center', flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(6,193,103,0.15)', borderWidth: 1, borderColor: C.green, borderRadius: 20, paddingHorizontal: 14, paddingVertical: 8 },
   tripDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: C.green, marginRight: 8 },
   tripBadgeText: { color: C.green, fontWeight: '800', fontSize: 12, letterSpacing: 1 },
@@ -594,6 +661,7 @@ const home = StyleSheet.create({
   innerDot: { width: 10, height: 10, backgroundColor: C.white, borderRadius: 5 },
   nextStopTitle: { fontSize: 10, fontWeight: '800', color: C.gray400, letterSpacing: 1.5, marginBottom: 3 },
   nextStopName: { fontSize: 17, fontWeight: '900', color: C.black },
+  nextStopAddress: { fontSize: 13, color: C.gray400, marginTop: 4, fontWeight: '500' },
   nextStopHint: { fontSize: 12, color: C.green, marginTop: 2, fontWeight: '700' },
 
   btnRow: { alignItems: 'center', marginBottom: 16 },

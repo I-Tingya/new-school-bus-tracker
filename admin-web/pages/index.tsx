@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useRouter } from 'next/router';
-import { Tenant, Student, Bus, Route } from 'shared-types';
+import { Tenant, Student, Bus, Route, BusMarker } from 'shared-types';
+import { LiveMap } from '../components/LiveMap';
 
 const API_BASE_URL = 'http://localhost:4000';
 
@@ -26,6 +27,10 @@ export default function AdminDashboard() {
   const [newData, setNewData] = useState<any>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [sosAlerts, setSosAlerts] = useState<any[]>([]);
+
+  // Address autocomplete states
+  const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const headers = {
     'Content-Type': 'application/json',
@@ -109,6 +114,50 @@ export default function AdminDashboard() {
   const dismissAlert = async (id: string) => {
     await fetch(`${API_BASE_URL}/core/alerts/${id}/resolve`, { method: 'PATCH', headers });
     setSosAlerts(prev => prev.filter(a => a.id !== id));
+  };
+
+  const handleAddressChange = async (input: string) => {
+    setNewData({...newData, address: input});
+    
+    if (input.length < 3) {
+      setAddressSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/tenant/geocode/suggest?input=${encodeURIComponent(input)}`, { headers });
+      const suggestions = await res.json();
+      setAddressSuggestions(suggestions || []);
+      setShowSuggestions(true);
+    } catch (err) {
+      console.error('Failed to fetch address suggestions:', err);
+    }
+  };
+
+  const handleSelectAddress = async (suggestion: any) => {
+    setNewData({...newData, address: suggestion.description});
+    setShowSuggestions(false);
+
+    // Fetch coordinates for this place
+    try {
+      const res = await fetch(`${API_BASE_URL}/tenant/geocode/place`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ placeId: suggestion.placeId })
+      });
+      const geocodeData = await res.json();
+      if (geocodeData && geocodeData.latitude && geocodeData.longitude) {
+        setNewData(prev => ({
+          ...prev,
+          address: geocodeData.formattedAddress,
+          latitude: geocodeData.latitude,
+          longitude: geocodeData.longitude
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch coordinates:', err);
+    }
   };
 
   const handleSave = async (type: TabType) => {
@@ -230,7 +279,7 @@ export default function AdminDashboard() {
         </div>
 
         <div style={{ flex: 1, padding: 32, overflowY: 'auto' }}>
-          {activeTab === 'map' && <MapView busesOnline={busesOnline} schoolName={school?.name} buses={buses} />}
+          {activeTab === 'map' && <MapView busesOnline={busesOnline} schoolName={school?.name} schoolId={schoolId as string} buses={buses} />}
           {activeTab === 'vehicles' && <EntityView title="Fleet Management" items={buses} type="vehicles" onAdd={() => setShowModal('vehicles')} onEdit={(it: any) => startEdit('vehicles', it)} onDelete={(it: any) => setDeleteConfirm({type:'vehicles', id: it.id, name: it.number})} />}
           {activeTab === 'routes' && <EntityView title="Route Management" items={routes} type="routes" onAdd={() => setShowModal('routes')} onEdit={(it: any) => startEdit('routes', it)} onDelete={(it: any) => setDeleteConfirm({type:'routes', id: it.id, name: it.name})} />}
           {activeTab === 'students' && <EntityView title="Student Directory" items={students} type="students" onAdd={() => setShowModal('students')} onEdit={(it: any) => startEdit('students', it)} onDelete={(it: any) => setDeleteConfirm({type:'students', id: it.id, name: it.name})} />}
@@ -247,7 +296,62 @@ export default function AdminDashboard() {
               <>
                 <input placeholder="Student Name" value={newData.name || ''} style={inputStyle} onChange={e => setNewData({...newData, name: e.target.value})} />
                 <input placeholder="Grade (e.g. 5, 10, K)" value={newData.grade || ''} style={inputStyle} onChange={e => setNewData({...newData, grade: e.target.value})} />
-                <input placeholder="Address" value={newData.address || ''} style={inputStyle} onChange={e => setNewData({...newData, address: e.target.value})} />
+                <div style={{ position: 'relative', width: '100%' }}>
+                  <input 
+                    placeholder="Address (type to search)" 
+                    value={newData.address || ''} 
+                    style={inputStyle} 
+                    onChange={e => handleAddressChange(e.target.value)}
+                    onFocus={() => addressSuggestions.length > 0 && setShowSuggestions(true)}
+                  />
+                  {showSuggestions && addressSuggestions.length > 0 && (
+                    <div style={{
+                      position: 'absolute',
+                      top: '100%',
+                      left: 0,
+                      right: 0,
+                      backgroundColor: 'white',
+                      border: '1px solid #E5E7EB',
+                      borderTopWidth: 0,
+                      borderBottomLeftRadius: 6,
+                      borderBottomRightRadius: 6,
+                      maxHeight: 200,
+                      overflowY: 'auto',
+                      zIndex: 10,
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}>
+                      {addressSuggestions.map((suggestion, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => handleSelectAddress(suggestion)}
+                          style={{
+                            padding: '8px 12px',
+                            borderBottom: '1px solid #F3F4F6',
+                            cursor: 'pointer',
+                            hover: { backgroundColor: '#F9FAFB' }
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#F9FAFB'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                        >
+                          <div style={{ fontSize: 14, fontWeight: 500, color: '#111827' }}>{suggestion.mainText}</div>
+                          <div style={{ fontSize: 12, color: '#6B7280' }}>{suggestion.secondaryText}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {newData.latitude && newData.longitude && (
+                  <div style={{
+                    padding: 12,
+                    backgroundColor: '#F0F9FF',
+                    borderRadius: 6,
+                    border: '1px solid #93C5FD',
+                    fontSize: 12,
+                    color: '#1E40AF'
+                  }}>
+                    📍 Coordinates: {parseFloat(newData.latitude).toFixed(6)}, {parseFloat(newData.longitude).toFixed(6)}
+                  </div>
+                )}
               </>
             )}
             
@@ -366,50 +470,57 @@ export default function AdminDashboard() {
   );
 }
 
-const MapView = ({ busesOnline, schoolName, buses = [] }: any) => (
-  <div style={{ display: 'flex', gap: 32, height: '100%' }}>
-    <div style={{ flex: 2, backgroundColor: 'white', borderRadius: 28, border: '1px solid #E5E7EB', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.04)' }}>
-      <div style={{ position: 'absolute', top: 24, left: 24, backgroundColor: 'white', padding: '12px 24px', borderRadius: 99, fontWeight: '800', fontSize: 13, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.12)', display: 'flex', alignItems: 'center', gap: 10, zIndex: 10 }}>
-        <span style={{ width: 10, height: 10, backgroundColor: '#10B981', borderRadius: '50%', boxShadow: '0 0 0 4px rgba(16, 185, 129, 0.2)' }}></span>
-        {Object.keys(busesOnline).length} BUSES TRACKING
+const MapView = ({ busesOnline, schoolName, schoolId, buses = [] }: any) => {
+  // Transform busesOnline data to BusMarker format
+  const busMarkers = Object.entries(busesOnline).map(([key, loc]: any) => {
+    const busObj = buses.find((b: any) => b.id === key || b.id === loc.numericId);
+    return {
+      busId: key,
+      busNumber: busObj?.number || key.substring(0, 4),
+      driverId: 'unknown',
+      latitude: loc.lat,
+      longitude: loc.lng,
+      timestamp: new Date(loc.lastSeen).toISOString()
+    } as any as BusMarker;
+  });
+
+  return (
+    <div style={{ display: 'flex', gap: 32, height: '100%' }}>
+      <div style={{ flex: 2, backgroundColor: 'white', borderRadius: 28, border: '1px solid #E5E7EB', position: 'relative', overflow: 'hidden', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.04)' }}>
+        <div style={{ position: 'absolute', top: 24, left: 24, backgroundColor: 'white', padding: '12px 24px', borderRadius: 99, fontWeight: '800', fontSize: 13, boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.12)', display: 'flex', alignItems: 'center', gap: 10, zIndex: 10 }}>
+          <span style={{ width: 10, height: 10, backgroundColor: '#10B981', borderRadius: '50%', boxShadow: '0 0 0 4px rgba(16, 185, 129, 0.2)' }}></span>
+          {busMarkers.length} BUSES TRACKING
+        </div>
+        <LiveMap buses={busMarkers} />
       </div>
-      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', backgroundColor: '#F8FAFC' }}>
-        <div style={{ fontSize: 72, marginBottom: 24 }}>🗺️</div>
-        <h3 style={{ color: '#1E293B', margin: '0 0 12px 0', fontWeight: 800, fontSize: 24 }}>Fleet Activity Map</h3>
-        <p style={{ color: '#64748B', maxWidth: 350, textAlign: 'center', fontSize: 15, lineHeight: 1.6 }}>(Interactive Map View for {schoolName || 'this school'})</p>
-      </div>
-    </div>
-    <div style={{ flex: 1, backgroundColor: 'white', borderRadius: 28, padding: 32, border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.04)' }}>
-      <h3 style={{ margin: '0 0 28px 0', color: '#111827', fontSize: 20, fontWeight: 800 }}>Active Fleet</h3>
-      <div style={{ flex: 1, overflowY: 'auto' }}>
-        {Object.entries(busesOnline).length === 0 ? (
-          <div style={{ textAlign: 'center', color: '#94A3B8', marginTop: 80 }}>
-            <div style={{ fontSize: 48, marginBottom: 20 }}>📡</div>
-            <p style={{ fontSize: 15, fontWeight: 500 }}>Waiting for GPS signals...</p>
-          </div>
-        ) : (
-          Object.entries(busesOnline).map(([id, loc]: any) => {
-            const busObj = buses.find((b: any) => b.id === id);
-            const displayTitle = busObj ? `BUS ${busObj.number}` : (loc.numericId ? 'BUS TRACKING' : `BUS-${id.substring(0,4).toUpperCase()}`);
-            return (
-            <div key={id} style={{ padding: 24, backgroundColor: '#F9FAFB', borderRadius: 20, marginBottom: 20, border: '1px solid #F1F5F9' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <span style={{ fontWeight: 800, fontSize: 14, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-                   {displayTitle}
-                </span>
-                <span style={{ backgroundColor: '#DCFCE7', color: '#166534', padding: '6px 14px', borderRadius: 99, fontSize: 11, fontWeight: '800' }}>ON ROUTE</span>
-              </div>
-              <div style={{ fontSize: 12, color: '#64748B', fontFamily: 'monospace', letterSpacing: '-0.02em', fontWeight: 600 }}>
-                LOC: {loc.lat.toFixed(5)}, {loc.lng.toFixed(5)}
-              </div>
+      <div style={{ flex: 1, backgroundColor: 'white', borderRadius: 28, padding: 32, border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.04)' }}>
+        <h3 style={{ margin: '0 0 28px 0', color: '#111827', fontSize: 20, fontWeight: 800 }}>Active Fleet</h3>
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {busMarkers.length === 0 ? (
+            <div style={{ textAlign: 'center', color: '#94A3B8', marginTop: 80 }}>
+              <div style={{ fontSize: 48, marginBottom: 20 }}>📡</div>
+              <p style={{ fontSize: 15, fontWeight: 500 }}>Waiting for GPS signals...</p>
             </div>
-          );
-        })
-        )}
+          ) : (
+            busMarkers.map((marker) => (
+              <div key={marker.busId} style={{ padding: 24, backgroundColor: '#F9FAFB', borderRadius: 20, marginBottom: 20, border: '1px solid #F1F5F9' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+                  <span style={{ fontWeight: 800, fontSize: 14, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                    BUS {marker.busNumber}
+                  </span>
+                  <span style={{ backgroundColor: '#DCFCE7', color: '#166534', padding: '6px 14px', borderRadius: 99, fontSize: 11, fontWeight: '800' }}>ON ROUTE</span>
+                </div>
+                <div style={{ fontSize: 12, color: '#64748B', fontFamily: 'monospace', letterSpacing: '-0.02em', fontWeight: 600 }}>
+                  LOC: {marker.latitude.toFixed(5)}, {marker.longitude.toFixed(5)}
+                </div>
+              </div>
+            ))
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const EntityView = ({ title, items, type, onAdd, onEdit, onDelete }: any) => (
   <div style={{ backgroundColor: 'white', borderRadius: 28, border: '1px solid #E5E7EB', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.04)', overflow: 'hidden' }}>
@@ -430,6 +541,7 @@ const EntityView = ({ title, items, type, onAdd, onEdit, onDelete }: any) => (
               <th style={thStyle}>Name/Number</th>
               {type === 'students' && <th style={thStyle}>Grade</th>}
               {type === 'students' && <th style={thStyle}>Address</th>}
+              {type === 'students' && <th style={thStyle}>Coordinates</th>}
               {type === 'vehicles' && <th style={thStyle}>Capacity</th>}
               {type === 'routes' && <th style={thStyle}>Details</th>}
               <th style={thStyle}>Actions</th>
@@ -441,6 +553,14 @@ const EntityView = ({ title, items, type, onAdd, onEdit, onDelete }: any) => (
                 <td style={tdStyle}>{item.name || item.number}</td>
                 {type === 'students' && <td style={tdStyle}>{item.grade || '-'}</td>}
                 {type === 'students' && <td style={tdStyle}>{item.address || 'N/A'}</td>}
+                {type === 'students' && (
+                  <td style={{ ...tdStyle, fontSize: 12, fontFamily: 'monospace' }}>
+                    {item.latitude && item.longitude 
+                      ? `${parseFloat(item.latitude).toFixed(4)}, ${parseFloat(item.longitude).toFixed(4)}`
+                      : '-'
+                    }
+                  </td>
+                )}
                 {type === 'vehicles' && <td style={tdStyle}>{item.capacity} seats</td>}
                 {type === 'routes' && <td style={tdStyle}>{(item.stops || []).length} Stops</td>}
                 <td style={tdStyle}>

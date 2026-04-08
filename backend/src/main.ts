@@ -4,6 +4,8 @@ import { LocationUpdate } from 'shared-types';
 
 import { utilities as nestWinstonUtilities, WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { RealtimeModule } from './realtime/realtime.module';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -16,6 +18,21 @@ import { CoreModule } from './core/core.module';
 import { TripModule } from './trip/trip.module';
 import { LocationModule } from './location/location.module';
 import { NotificationModule } from './notification/notification.module';
+
+// Load environment variables from .env file
+const envPath = path.join(process.cwd(), '.env');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  const envVars = envContent.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+  envVars.forEach(line => {
+    const [key, ...valueParts] = line.split('=');
+    const value = valueParts.join('=').trim();
+    if (key && value) {
+      process.env[key.trim()] = value;
+    }
+  });
+  console.log('Loaded environment variables from .env file');
+}
 
 @Module({
   imports: [

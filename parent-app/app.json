@@ -7,6 +7,15 @@
     "userInterfaceStyle": "light",
     "android": {
       "package": "com.anonymous.parentapp"
-    }
+    },
+    "plugins": [
+      [
+        "expo-maps",
+        {
+          "mapsImplementation": "google",
+          "googleMapsApiKey": "your_api_key_here"
+        }
+      ]
+    ]
   }
 }

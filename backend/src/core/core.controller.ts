@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestj
 import { StudentService } from './student.service';
 import { BusService } from './bus.service';
 import { RouteService } from './route.service';
+import { StopService } from './stop.service';
 import { AlertService } from './alert.service';
 
 // @UseGuards(JwtAuthGuard)
@@ -11,6 +12,7 @@ export class CoreController {
     private readonly studentService: StudentService,
     private readonly busService: BusService,
     private readonly routeService: RouteService,
+    private readonly stopService: StopService,
     private readonly alertService: AlertService,
   ) {}
 
@@ -49,6 +51,18 @@ export class CoreController {
 
   @Delete('routes/:id')
   deleteRoute(@Param('id') id: string) { return this.routeService.delete(id); }
+
+  @Get('stops/:routeId')
+  getStopsByRoute(@Param('routeId') routeId: string) { return this.stopService.findByRouteId(routeId); }
+
+  @Post('stops')
+  createStop(@Body() data: any) { return this.stopService.create(data); }
+
+  @Patch('stops/:id')
+  updateStop(@Param('id') id: string, @Body() data: any) { return this.stopService.update(id, data); }
+
+  @Delete('stops/:id')
+  deleteStop(@Param('id') id: string) { return this.stopService.delete(id); }
 
   // ── Alerts (SOS) ──────────────────────────────────────────────────────
   @Post('alerts')

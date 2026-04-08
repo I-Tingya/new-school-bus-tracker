@@ -5,6 +5,7 @@ import { Student } from '../database/entities/tenant/student.entity';
 import { Bus } from '../database/entities/tenant/bus.entity';
 import { Route } from '../database/entities/tenant/route.entity';
 import { Alert } from '../database/entities/tenant/alert.entity';
+import { Stop } from '../database/entities/tenant/stop.entity';
 
 export const coreProviders = [
   {
@@ -49,6 +50,17 @@ export const coreProviders = [
       if (!tenantId) throw new Error('No tenantId found in request');
       const dataSource = await connectionService.getTenantConnection(tenantId);
       return dataSource.getRepository(Alert);
+    },
+  },
+  {
+    provide: 'STOP_REPOSITORY',
+    scope: Scope.REQUEST,
+    inject: [REQUEST, TenantConnectionService],
+    useFactory: async (req: any, connectionService: TenantConnectionService) => {
+      const tenantId = req.user?.tenantId || req.headers['x-tenant-id'];
+      if (!tenantId) throw new Error('No tenantId found in request');
+      const dataSource = await connectionService.getTenantConnection(tenantId);
+      return dataSource.getRepository(Stop);
     },
   },
 ];

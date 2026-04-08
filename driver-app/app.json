@@ -26,6 +26,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-maps",
+        {
+          "mapsImplementation": "google",
+          "googleMapsApiKey": "AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs"
+        }
+      ]
+    ]
   }
 }
