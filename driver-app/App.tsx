@@ -484,7 +484,7 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
           disabled={!tripActive}
           activeOpacity={0.7}
         >
-          <View style={[home.nextStopIcon, tripActive && { backgroundColor: C.green }]}>
+          <View style={home.nextStopIcon}>
             <View style={home.innerDot} />
           </View>
           <View style={{ flex: 1 }}>

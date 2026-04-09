@@ -90,8 +90,13 @@ export interface RouteWithStops {
 }
 
 export interface ETAInfo {
-  studentId: string;
-  studentName: string;
-  estimatedArrival: number; // in seconds
-  distance: number; // in meters
+  studentId?: string;
+  studentName?: string;
+  estimatedArrival?: number; // in seconds
+  distance?: number; // in meters
+  distanceMeters?: number;
+  durationSeconds?: number;
+  distanceText?: string;
+  durationText?: string;
 }
+

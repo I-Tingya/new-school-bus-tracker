@@ -1,7 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { MapView } from 'expo-maps';
+import { View, Text, StyleSheet, ActivityIndicator, Platform, Linking, TouchableOpacity } from 'react-native';
 import { BusMarker, Coordinates, RouteWithStops, ETAInfo } from 'shared-types';
+
+let MapView: any = null;
+let Marker: any = null;
+let Polyline: any = null;
+
+if (Platform.OS !== 'web') {
+  try {
+    const Maps = require('react-native-maps');
+    MapView = Maps.default;
+    Marker = Maps.Marker;
+    Polyline = Maps.Polyline;
+  } catch (error) {
+    console.warn('react-native-maps not available:', error);
+  }
+}
+
 
 interface ParentMapProps {
   busLocation?: BusMarker;
@@ -18,18 +33,17 @@ export const ParentMap: React.FC<ParentMapProps> = ({
   isTracking = false,
   studentName
 }) => {
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef<any>(null);
   const [loading, setLoading] = useState(false);
 
   // Auto-center on bus location when it updates
   useEffect(() => {
     if (busLocation && mapRef.current) {
-      mapRef.current.animateCamera({
-        center: {
-          latitude: busLocation.latitude,
-          longitude: busLocation.longitude
-        },
-        zoom: 15
+      mapRef.current.animateToRegion({
+        latitude: Number(busLocation.latitude),
+        longitude: Number(busLocation.longitude),
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01
       }, 500);
     }
   }, [busLocation]);
@@ -43,65 +57,37 @@ export const ParentMap: React.FC<ParentMapProps> = ({
 
   return (
     <View style={styles.container}>
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialCamera={{
-          center: busLocation 
-            ? { latitude: busLocation.latitude, longitude: busLocation.longitude }
-            : { latitude: 40.7128, longitude: -74.0060 },
-          zoom: 14
-        }}
-        mapType="standard"
-      >
-        {/* Bus Location Marker */}
-        {busLocation && (
-          <MapView.Marker
-            coordinate={{
-              latitude: busLocation.latitude,
-              longitude: busLocation.longitude
-            }}
-            title={`Bus #${busLocation.busNumber}`}
-            description="Current Bus Location"
-          >
-            <View style={styles.busMarker}>
-              <Text style={styles.busEmoji}>🚌</Text>
-            </View>
-          </MapView.Marker>
-        )}
-
-        {/* Route Polyline */}
-        {studentRoute && studentRoute.stops.length > 1 && (
-          <MapView.Polyline
-            coordinates={studentRoute.stops.map(s => ({
-              latitude: s.latitude,
-              longitude: s.longitude
-            }))}
-            strokeColor="#2196F3"
-            strokeWidth={3}
-          />
-        )}
-
-        {/* Route Stops */}
-        {studentRoute?.stops.map((stop, idx) => (
-          <MapView.Marker
-            key={stop.id}
-            coordinate={{
-              latitude: stop.latitude,
-              longitude: stop.longitude
-            }}
-            title={stop.name}
-            description={`Stop ${idx + 1}`}
-          >
-            <View style={[
-              styles.stopMarker,
-              idx === 0 && styles.startStopMarker
-            ]}>
-              <Text style={styles.stopMarkerText}>{idx + 1}</Text>
-            </View>
-          </MapView.Marker>
-        ))}
-      </MapView>
+      <View style={styles.webMapContainer}>
+        <View style={styles.webMapContent}>
+          {busLocation ? (
+            <>
+              {studentRoute && studentRoute.stops.length > 0 && (
+                <Text style={[styles.webMapCoords, { marginTop: 12, fontSize: 12, color: '#666' }]}>
+                  Route tracking active. ETA: {eta ? formatETA(eta.durationSeconds) : 'Calculating...'}
+                </Text>
+              )}
+              <TouchableOpacity 
+                style={styles.webMapButton}
+                onPress={() => {
+                  const origin = `${busLocation.latitude},${busLocation.longitude}`;
+                  const url = `https://www.google.com/maps/search/?api=1&query=${origin}`;
+                  Linking.openURL(url);
+                }}
+              >
+                <Text style={styles.webMapButtonText}>View on Google Maps</Text>
+              </TouchableOpacity>
+              <Text style={[styles.webMapCoords, { marginTop: 16, fontSize: 12, color: '#999' }]}>
+                View the live GPS location of the bus!
+              </Text>
+            </>
+          ) : (
+            <>
+              <ActivityIndicator color="#2196F3" size="large" />
+              <Text style={styles.webMapCoords}>Waiting for bus to start...</Text>
+            </>
+          )}
+        </View>
+      </View>
 
       {/* Top Status Badge */}
       <View style={styles.statusBadge}>
@@ -350,5 +336,54 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#94A3B8',
     fontWeight: '500'
+  },
+  debugZoomPanel: {
+    position: 'absolute',
+    top: 100,
+    right: 16,
+    backgroundColor: 'rgba(255,255,255,0.8)',
+    borderRadius: 8,
+    padding: 8,
+    zIndex: 99
+  },
+  debugZoomButton: {
+    padding: 10,
+    backgroundColor: '#0EA5E9',
+    color: '#fff',
+    fontWeight: 'bold',
+    marginVertical: 4,
+    borderRadius: 6,
+    textAlign: 'center'
+  },
+  webMapContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F0F4F8',
+    padding: 24,
+  },
+  webMapContent: {
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  webMapCoords: {
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '500',
+    marginBottom: 8,
+    fontFamily: 'monospace',
+    textAlign: 'center',
+  },
+  webMapButton: {
+    backgroundColor: '#141414',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+    marginTop: 16,
+  },
+  webMapButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '600',
   }
 });

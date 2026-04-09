@@ -13,7 +13,7 @@
         "expo-maps",
         {
           "mapsImplementation": "google",
-          "googleMapsApiKey": "your_api_key_here"
+          "googleMapsApiKey": "AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs"
         }
       ]
     ]

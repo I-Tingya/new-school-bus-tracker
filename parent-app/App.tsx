@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions, SafeAreaView, Alert, ActivityIndicator, Platform } from 'react-native';
 import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ParentMap } from './components/ParentMap';
 
 const API_URL = Platform.OS === 'web' ? 'http://localhost:4000' : 'http://192.168.0.15:4000';
 const { width, height } = Dimensions.get('window');
@@ -128,6 +129,7 @@ function HomeScreen({ tenant, student, onLogout }: any) {
   const [route, setRoute] = useState<any>(null);
   const [activeTrip, setActiveTrip] = useState<any>(null);
   const [location, setLocation] = useState<any>(null);
+  const [eta, setEta] = useState<any>(null);
   const activeTripRef = React.useRef<any>(null);
 
   useEffect(() => {
@@ -143,6 +145,24 @@ function HomeScreen({ tenant, student, onLogout }: any) {
         const routes = await api.getRoutes(tenant.id);
         const myRoute = routes.find((r: any) => (r.stops || []).includes(student.id));
         if (!myRoute) return Alert.alert('Notice', 'Your student has not been assigned to any route in the Admin Dashboard yet.');
+        
+        try {
+          const allStudents = await api.getStudents(tenant.id);
+          const fullStops = (myRoute.stops || []).map((stopId: string, idx: number) => {
+             const stu = allStudents.find((s:any) => s.id === stopId);
+             return {
+               id: stopId,
+               name: stu ? stu.name : `Stop ${idx + 1}`,
+               latitude: stu?.latitude || 0,
+               longitude: stu?.longitude || 0,
+               sequence: idx + 1
+             };
+          }).filter((s: any) => s.latitude !== 0 && s.longitude !== 0);
+          myRoute.stopsDetailed = fullStops;
+        } catch (e) {
+          console.warn('Could not fetch student details for route stops');
+        }
+
         setRoute(myRoute);
 
         const checkTrip = async () => {
@@ -206,16 +226,50 @@ function HomeScreen({ tenant, student, onLogout }: any) {
 
   const isTracking = location && activeTrip && location.tripId === activeTrip.id;
 
+  useEffect(() => {
+    if (!isTracking || !route || !route.stopsDetailed) return;
+
+    const currentStop = route.stopsDetailed.find((s: any) => s.id === student.id);
+    if (!currentStop) return;
+
+    const fetchETA = async () => {
+      try {
+        const response = await fetch(
+          'https://maps.googleapis.com/maps/api/distancematrix/json?' +
+          `origins=${location.lat},${location.lng}&` +
+          `destinations=${currentStop.latitude},${currentStop.longitude}&` +
+          `key=AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs`
+        );
+        const data = await response.json();
+        if (data.rows?.[0]?.elements?.[0]?.status === 'OK') {
+          const element = data.rows[0].elements[0];
+          setEta({
+            distanceMeters: element.distance.value,
+            durationSeconds: element.duration.value,
+            distanceText: element.distance.text,
+            durationText: element.duration.text
+          });
+        }
+      } catch(e) {
+        console.warn('Failed to fetch ETA:', e);
+      }
+    };
+
+    fetchETA();
+    const interval = setInterval(fetchETA, 30000);
+    return () => clearInterval(interval);
+  }, [location, activeTrip, route]);
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.mapMock}>
-        {isTracking ? (
-          <View style={[styles.busMarker, { transform: [{ scale: 1.2 }] }]}><Text style={styles.busMarkerIcon}>🚌</Text></View>
-        ) : (
-          <Text style={styles.mapPlaceholderText}>
-            {activeTrip ? 'Locating Bus...' : 'No active trip for this route right now.'}
-          </Text>
-        )}
+      <View style={{ flex: 1 }}>
+        <ParentMap
+          busLocation={location ? { ...location, latitude: location.lat, longitude: location.lng, busNumber: activeTrip?.busId || 'N/A' } : undefined}
+          studentRoute={route ? { ...route, stops: route.stopsDetailed || [] } : undefined}
+          eta={eta}
+          isTracking={isTracking}
+          studentName={student?.name}
+        />
       </View>
 
       <View style={styles.headerOverlay}>
@@ -224,31 +278,6 @@ function HomeScreen({ tenant, student, onLogout }: any) {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Tracking Activity</Text>
         <View style={{ width: 44 }} />
-      </View>
-
-      <View style={styles.bottomSheet}>
-        <View style={styles.sheetHandle} />
-        <View style={styles.sheetHeader}>
-           <View>
-              <Text style={styles.etaText}>
-                {isTracking ? 'Arriving in ~4 mins' : (activeTrip ? 'Connecting...' : 'Offline')}
-              </Text>
-              <Text style={styles.statusSubText}>{route ? route.name : 'Unknown Route'} • {student.name}</Text>
-           </View>
-        </View>
-
-        <View style={styles.divider} />
-
-        <View style={styles.busInfoRow}>
-          <View style={styles.driverAvatar}><Text>👤</Text></View>
-          <View style={styles.busDetails}>
-            <Text style={styles.driverName}>Live GPS Tracking</Text>
-            <Text style={styles.plateNumber}>
-              {isTracking ? `LAT: ${location.lat.toFixed(5)}, LNG: ${location.lng.toFixed(5)}` : 'Waiting for network...'}
-            </Text>
-          </View>
-          <View style={getPulseStyle(isTracking)} />
-        </View>
       </View>
     </SafeAreaView>
   );
