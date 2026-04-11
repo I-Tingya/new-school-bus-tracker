@@ -24,6 +24,7 @@ interface ParentMapProps {
   eta?: ETAInfo;
   isTracking?: boolean;
   studentName?: string;
+  studentLocation?: { latitude: number; longitude: number };
 }
 
 export const ParentMap: React.FC<ParentMapProps> = ({
@@ -31,7 +32,8 @@ export const ParentMap: React.FC<ParentMapProps> = ({
   studentRoute,
   eta,
   isTracking = false,
-  studentName
+  studentName,
+  studentLocation
 }) => {
   const mapRef = useRef<any>(null);
   const [loading, setLoading] = useState(false);
@@ -70,7 +72,11 @@ export const ParentMap: React.FC<ParentMapProps> = ({
                 style={styles.webMapButton}
                 onPress={() => {
                   const origin = `${busLocation.latitude},${busLocation.longitude}`;
-                  const url = `https://www.google.com/maps/search/?api=1&query=${origin}`;
+                  let url = `https://www.google.com/maps/search/?api=1&query=${origin}`;
+                  if (studentLocation && studentLocation.latitude && studentLocation.longitude) {
+                    const destination = `${studentLocation.latitude},${studentLocation.longitude}`;
+                    url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`;
+                  }
                   Linking.openURL(url);
                 }}
               >

@@ -63,34 +63,34 @@ const fetchWithTimeout = (url: string, options: RequestInit = {}, ms = 8000): Pr
 
 const api = {
   getTenants: (): Promise<Tenant[]> =>
-    fetchWithTimeout(`${API_URL}/tenant`).then(r => r.json()),
+    fetchWithTimeout(`${API_URL}/tenant`).then(r => r.ok ? r.json() : []),
 
   getRoutes: (tenantId: string): Promise<Route[]> =>
     fetchWithTimeout(`${API_URL}/core/routes`, {
       headers: { 'x-tenant-id': tenantId },
-    }).then(r => r.json()),
+    }).then(r => r.ok ? r.json() : []),
 
   getBuses: (tenantId: string): Promise<Bus[]> =>
     fetchWithTimeout(`${API_URL}/core/buses`, {
       headers: { 'x-tenant-id': tenantId },
-    }).then(r => r.json()),
+    }).then(r => r.ok ? r.json() : []),
 
   getStudents: (tenantId: string): Promise<Student[]> =>
     fetchWithTimeout(`${API_URL}/core/students`, {
       headers: { 'x-tenant-id': tenantId },
-    }).then(r => r.json()),
+    }).then(r => r.ok ? r.json() : []),
 
   getActiveTrip: (tenantId: string, busId: string): Promise<any> =>
     fetchWithTimeout(`${API_URL}/trip/active/${busId}`, {
       headers: { 'x-tenant-id': tenantId },
-    }).then(r => r.json()),
+    }).then(r => r.ok ? r.json() : null),
 
   postAlert: (tenantId: string, message: string): Promise<any> =>
     fetchWithTimeout(`${API_URL}/core/alerts`, {
       method: 'POST',
       headers: { 'x-tenant-id': tenantId, 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),
-    }).then(r => r.json()),
+    }).then(r => r.ok ? r.json() : null),
 };
 
 // ══════════════════════════════════════════════════════════════════════════
@@ -257,17 +257,20 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
 
   useEffect(() => {
     api.getRoutes(tenant.id).then(routesData => {
-      setRoutes(routesData);
+      const validRoutes = Array.isArray(routesData) ? routesData : [];
+      setRoutes(validRoutes);
       api.getActiveTrip(tenant.id, bus.id).then(trip => {
         if (trip && trip.id) {
           setTripActive(trip.id);
-          const activeR = routesData.find((r: Route) => r.id === trip.routeId);
+          const activeR = validRoutes.find((r: Route) => r.id === trip.routeId);
           if (activeR) setActiveRoute(activeR);
           setTripStart(new Date(trip.startedAt));
         }
       }).catch(() => {});
-    }).catch(() => { });
-    api.getStudents(tenant.id).then(setStudents).catch(() => { });
+    }).catch(() => { setRoutes([]); });
+    api.getStudents(tenant.id).then(studentsData => {
+      setStudents(Array.isArray(studentsData) ? studentsData : []);
+    }).catch(() => { setStudents([]); });
   }, [tenant.id]);
 
   useEffect(() => {

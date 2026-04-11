@@ -4,25 +4,17 @@
     "slug": "driver-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#000000"
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#000000"
-      },
-      "package": "com.anonymous.driverapp"
+      "package": "com.anonymous.driverapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,6 +27,11 @@
           "googleMapsApiKey": "AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a5cadeff-2227-4b5a-a26d-1fa494e9dc19"
+      }
+    }
   }
 }

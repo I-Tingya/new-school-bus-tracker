@@ -6,7 +6,12 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "android": {
-      "package": "com.anonymous.parentapp"
+      "package": "com.anonymous.parentapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs"
+        }
+      }
     },
     "plugins": [
       [
@@ -16,6 +21,11 @@
           "googleMapsApiKey": "AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "1895cab2-b10b-411c-8b46-0cf89added11"
+      }
+    }
   }
 }

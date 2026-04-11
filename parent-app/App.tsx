@@ -269,6 +269,7 @@ function HomeScreen({ tenant, student, onLogout }: any) {
           eta={eta}
           isTracking={isTracking}
           studentName={student?.name}
+          studentLocation={student?.latitude ? { latitude: student.latitude, longitude: student.longitude } : undefined}
         />
       </View>
 
