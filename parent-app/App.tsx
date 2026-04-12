@@ -4,7 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ParentMap } from './components/ParentMap';
 
-const API_URL = Platform.OS === 'web' ? 'http://localhost:4000' : 'http://192.168.0.15:4000';
+const API_URL = Platform.OS === 'web' ? 'http://localhost:4000' : 'http://192.168.0.19:4000';
 const { width, height } = Dimensions.get('window');
 
 if (Platform.OS === 'web') {

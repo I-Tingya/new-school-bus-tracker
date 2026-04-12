@@ -77,6 +77,12 @@ async function bootstrap() {
   
   app.enableCors();
   
+  // Log all incoming requests for debugging mobile connections
+  app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url} from ${req.ip}`);
+    next();
+  });
+  
   // Dummy usage to ensure shared-types is correctly imported
   const testUpdate: LocationUpdate = {
     driverId: '1',

@@ -10,6 +10,7 @@
     },
     "android": {
       "package": "com.anonymous.driverapp",
+      "usesCleartextTraffic": true,
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs"
