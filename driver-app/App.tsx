@@ -204,6 +204,10 @@ function LoginScreen({ onLogin }: { onLogin: (t: Tenant, b: Bus) => void }) {
           <TouchableOpacity style={login.button} onPress={handleLogin} disabled={loading} activeOpacity={0.85}>
             {loading ? <ActivityIndicator color="white" /> : <Text style={login.buttonText}>Start Driving</Text>}
           </TouchableOpacity>
+
+          <Text style={{ color: '#4B5563', fontSize: 10, textAlign: 'center', marginTop: 20 }}>
+            Debug Config: {API_URL}
+          </Text>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
