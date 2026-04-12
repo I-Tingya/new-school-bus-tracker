@@ -163,8 +163,8 @@ function LoginScreen({ onLogin }: { onLogin: (t: Tenant, b: Bus) => void }) {
       if (!busMatch) { setError(`Bus #${busNumber} not found in this school.`); return; }
 
       onLogin(match, busMatch);
-    } catch {
-      setError('Cannot connect to server. Make sure the backend is running.');
+    } catch (err: any) {
+      setError('Connection Error: ' + (err.message || String(err)));
     } finally {
       setLoading(false);
     }
