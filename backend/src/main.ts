@@ -75,7 +75,12 @@ async function bootstrap() {
     }),
   });
   
-  app.enableCors();
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    allowedHeaders: '*',
+  });
   
   // Log all incoming requests for debugging mobile connections
   app.use((req, res, next) => {

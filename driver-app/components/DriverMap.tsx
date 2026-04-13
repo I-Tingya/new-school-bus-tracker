@@ -2,17 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Platform, StyleSheet, ActivityIndicator, Linking, TouchableOpacity } from 'react-native';
 import { Coordinates, BusMarker, Student } from 'shared-types';
 
-let ExpoMaps: any = null;
-let MapView: any = View;
-if (Platform.OS !== 'web') {
-  try {
-    ExpoMaps = require('expo-maps');
-    MapView = ExpoMaps.MapView;
-  } catch (error) {
-    console.warn('expo-maps native module not available:', error);
-    MapView = null;
-  }
-}
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { Coordinates, BusMarker, Student } from 'shared-types';
 
 interface DriverMapProps {
   currentLocation?: Coordinates & BusMarker;
@@ -25,10 +16,10 @@ export const DriverMap: React.FC<DriverMapProps> = ({
   tripStatus,
   students = []
 }) => {
-  const mapRef = useRef<any>(null);
+  const mapRef = useRef<MapView>(null);
   const lastAnimatedLoc = useRef<Coordinates | null>(null);
 
-  // Auto-animate to current location on native maps
+  // Auto-animate to current location
   useEffect(() => {
     if (currentLocation && mapRef.current && Platform.OS !== 'web') {
       const { latitude, longitude } = currentLocation;
@@ -44,12 +35,10 @@ export const DriverMap: React.FC<DriverMapProps> = ({
         mapRef.current.animateCamera({
           center: { latitude, longitude },
           zoom: 16
-        }, 800);
+        }, { duration: 800 });
       }
     }
   }, [currentLocation]);
-
-  const mapAvailable = Platform.OS !== 'web' && MapView !== null;
 
   // Generate Google Maps URL with all stops as waypoints in route order
   const generateGoogleMapsUrl = () => {
@@ -59,9 +48,6 @@ export const DriverMap: React.FC<DriverMapProps> = ({
     
     // Debug: log what students we have
     console.log('GoogleMapsUrl Debug - Students received:', students.length);
-    students.forEach((s, i) => {
-      console.log(`Student ${i}: name=${s.name}, address=${s.address}, lat=${s.latitude}, lng=${s.longitude}`);
-    });
 
     // Try using addresses first, fall back to coordinates
     let stops = students
@@ -76,8 +62,6 @@ export const DriverMap: React.FC<DriverMapProps> = ({
       })
       .filter((stop): stop is string => stop !== null);
 
-    console.log('GoogleMapsUrl Debug - Stops to use:', stops.length, stops);
-
     if (stops.length === 0) {
       return `https://www.google.com/maps/search/${origin}`;
     }
@@ -91,7 +75,6 @@ export const DriverMap: React.FC<DriverMapProps> = ({
     const destination = stops[stops.length - 1];
     const waypoints = stops.slice(0, -1).join('|');
     const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&waypoints=${waypoints}`;
-    console.log('GoogleMapsUrl Debug - Final URL:', url);
     return url;
   };
 
@@ -142,78 +125,33 @@ export const DriverMap: React.FC<DriverMapProps> = ({
     );
   }
 
-  // Fallback for when expo-maps is not available (Expo Go, etc.)
-  if (!mapAvailable) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.webMapContainer}>
-          <View style={styles.webMapContent}>
-            {currentLocation ? (
-              <>
-                {students.filter(s => s.latitude && s.longitude).length > 0 && (
-                  <Text style={[styles.webMapCoords, { marginTop: 12, fontSize: 12, color: '#666' }]}>
-                    Route includes {students.filter(s => s.latitude && s.longitude).length} stop{students.filter(s => s.latitude && s.longitude).length !== 1 ? 's' : ''}
-                  </Text>
-                )}
-                <TouchableOpacity 
-                  style={styles.webMapButton}
-                  onPress={() => Linking.openURL(googleMapsUrl)}
-                >
-                  <Text style={styles.webMapButtonText}>View on Google Maps</Text>
-                </TouchableOpacity>
-                <Text style={[styles.webMapCoords, { marginTop: 16, fontSize: 12, color: '#999' }]}>
-                  (Native maps not available in Expo Go)
-                </Text>
-              </>
-            ) : (
-              <>
-                <ActivityIndicator color="#2196F3" size="large" />
-                <Text style={styles.webMapCoords}>Waiting for GPS signal...</Text>
-              </>
-            )}
-          </View>
-        </View>
-
-        {/* Bottom Info Panel */}
-        <View style={styles.infoPanel}>
-          <View style={styles.statusIndicator}>
-            <View style={[
-              styles.statusDot,
-              tripStatus === 'ACTIVE' ? styles.statusActive : styles.statusInactive
-            ]} />
-            <Text style={styles.statusText}>
-              {tripStatus === 'ACTIVE' ? 'On Route' : 'Inactive'}
-            </Text>
-          </View>
-        </View>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <MapView
         ref={mapRef}
         style={styles.map}
-        initialCamera={{
-          center: currentLocation || { latitude: 40.7128, longitude: -74.0060 },
-          zoom: 15
+        provider={PROVIDER_GOOGLE}
+        initialRegion={{
+          latitude: currentLocation?.latitude || 40.7128,
+          longitude: currentLocation?.longitude || -74.0060,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
         }}
         mapType="standard"
       >
         {currentLocation && (
-          <MapView.Marker
+          <Marker
             coordinate={currentLocation}
             title={`Bus #${currentLocation.busNumber}`}
             description="Current GPS Position"
           >
             <View style={styles.currentLocationMarker} />
-          </MapView.Marker>
+          </Marker>
         )}
         
         {students.map((student, idx) => (
           student.latitude && student.longitude && (
-            <MapView.Marker
+            <Marker
               key={student.id || idx}
               coordinate={{
                 latitude: student.latitude,
@@ -225,7 +163,7 @@ export const DriverMap: React.FC<DriverMapProps> = ({
               <View style={styles.studentMarker}>
                 <Text style={styles.studentMarkerText}>👤</Text>
               </View>
-            </MapView.Marker>
+            </Marker>
           )
         ))}
       </MapView>
