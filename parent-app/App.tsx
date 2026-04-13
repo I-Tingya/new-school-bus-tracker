@@ -23,11 +23,9 @@ if (Platform.OS === 'web') {
   document.head.append(style);
 }
 
-const fetchWithTimeout = (url: string, options: any = {}, timeout = 5000) => {
-  return Promise.race([
-    fetch(url, options),
-    new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
-  ]) as Promise<Response>;
+const fetchWithTimeout = (url: string, options: any = {}) => {
+  // Removing timer-based wrapper as it was causing issues on some Android versions.
+  return fetch(url, options);
 };
 
 const api = {

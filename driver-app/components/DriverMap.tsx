@@ -26,14 +26,26 @@ export const DriverMap: React.FC<DriverMapProps> = ({
   students = []
 }) => {
   const mapRef = useRef<any>(null);
+  const lastAnimatedLoc = useRef<Coordinates | null>(null);
 
   // Auto-animate to current location on native maps
   useEffect(() => {
     if (currentLocation && mapRef.current && Platform.OS !== 'web') {
-      mapRef.current.animateCamera({
-        center: { latitude: currentLocation.latitude, longitude: currentLocation.longitude },
-        zoom: 16
-      }, 500);
+      const { latitude, longitude } = currentLocation;
+      
+      // Only animate if moved more than ~5 meters (approx 0.00005 deg)
+      const last = lastAnimatedLoc.current;
+      const movedEnough = !last || 
+        Math.abs(last.latitude - latitude) > 0.00005 || 
+        Math.abs(last.longitude - longitude) > 0.00005;
+
+      if (movedEnough) {
+        lastAnimatedLoc.current = { latitude, longitude };
+        mapRef.current.animateCamera({
+          center: { latitude, longitude },
+          zoom: 16
+        }, 800);
+      }
     }
   }, [currentLocation]);
 

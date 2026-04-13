@@ -11,6 +11,12 @@
     "android": {
       "package": "com.anonymous.driverapp",
       "usesCleartextTraffic": true,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
+      ],
       "config": {
         "googleMaps": {
           "apiKey": "AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs"
@@ -34,6 +40,13 @@
         {
           "mapsImplementation": "google",
           "googleMapsApiKey": "AIzaSyBDLm4XfMW7TuJZbplyvysgFux25GnRJgs"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysPermission": "Allow $(PRODUCT_NAME) to use your location even when you are not using the app.",
+          "isAndroidForegroundServiceEnabled": true
         }
       ]
     ],

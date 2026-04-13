@@ -237,6 +237,7 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
   const [currentStopIdx, setCurrentStopIdx] = useState(0);
   const [currentLocation, setCurrentLocation] = useState<(Coordinates & BusMarker) | null>(null);
   const menuAnim = useRef(new Animated.Value(-width * 0.78)).current;
+  const lastReportRef = useRef<number>(0);
 
   const orderedRouteStudents = activeRoute?.stops
     .map(stopId => students.find(student => student.id === stopId))
@@ -275,73 +276,73 @@ function HomeScreen({ tenant, bus, onLogout }: { tenant: Tenant; bus: Bus; onLog
 
   useEffect(() => {
     let sub: Location.LocationSubscription | null = null;
-    let timer: NodeJS.Timeout;
 
     const startTracking = async () => {
-      let lat = 40.7128;
-      let lng = -74.0060;
-
-      // Try hardware hook if available
       try {
+        // Request foreground permissions (just in case they were revoked)
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          console.warn('Location permission not granted');
+          return;
+        }
+
         sub = await Location.watchPositionAsync(
-          { accuracy: Location.Accuracy.Balanced, timeInterval: 3000, distanceInterval: 0 },
+          { 
+            accuracy: Location.Accuracy.Balanced, 
+            timeInterval: 4000, // Update state every 4s
+            distanceInterval: 5 
+          },
           (loc) => {
-            lat = loc.coords.latitude;
-            lng = loc.coords.longitude;
-            // Update current location state with BusMarker data
+            const { latitude, longitude } = loc.coords;
+            
+            // 1. Update UI state
             setCurrentLocation({
-              latitude: lat,
-              longitude: lng,
+              latitude,
+              longitude,
               busNumber: bus.number,
               busId: bus.id,
               driverId: '00000000-0000-0000-0000-000000000000',
               timestamp: new Date().toISOString(),
               tripId: typeof tripActive === 'string' ? tripActive : undefined
             });
+
+            // 2. Throttled Backend Reporting (once every 8 seconds to be safe)
+            const now = Date.now();
+            if (tripActive && typeof tripActive === 'string' && (now - lastReportRef.current > 8000)) {
+              lastReportRef.current = now;
+              
+              const payload = {
+                driverId: '00000000-0000-0000-0000-000000000000',
+                tripId: tripActive,
+                latitude,
+                longitude,
+                timestamp: new Date().toISOString()
+              };
+
+              fetchWithTimeout(`${API_URL}/location/update`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-tenant-id': tenant.id },
+                body: JSON.stringify(payload)
+              }).then(r => console.log('Location Reported:', r.status))
+                .catch(e => console.error('Reporting Failed:', e.message));
+            }
           }
         );
       } catch (e) {
-        console.log('Hardware GPS not active, falling back to simulated coords.');
+        console.error('Error starting location tracking:', e);
+        Alert.alert('Tracking Error', 'Could not start GPS tracking. Please check your settings.');
       }
-
-      // 3-second simulation loop to guarantee network traversal on emulator
-      timer = setInterval(() => {
-        if (tripActive && typeof tripActive === 'string') {
-          lat += 0.0002;
-          lng += 0.0002;
-          
-          // Update location state
-          setCurrentLocation({
-            latitude: lat,
-            longitude: lng,
-            busNumber: bus.number,
-            busId: bus.id,
-            driverId: '00000000-0000-0000-0000-000000000000',
-            timestamp: new Date().toISOString(),
-            tripId: tripActive
-          });
-          
-          const payload = {
-            driverId: '00000000-0000-0000-0000-000000000000',
-            tripId: tripActive,
-            latitude: lat,
-            longitude: lng,
-            timestamp: new Date().toISOString()
-          };
-          fetchWithTimeout(`${API_URL}/location/update`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'x-tenant-id': tenant.id },
-            body: JSON.stringify(payload)
-          }).then(r => console.log('Location Ping ->', r.status))
-            .catch(e => console.log('Location Ping Failed'));
-        }
-      }, 3000);
     };
 
-    if (tripActive) startTracking();
+    if (tripActive) {
+      startTracking();
+    }
+
     return () => { 
-      if (sub) sub.remove(); 
-      if (timer) clearInterval(timer);
+      if (sub) {
+        sub.remove();
+        sub = null;
+      }
     };
   }, [tripActive, tenant.id, bus.id, bus.number]);
 
