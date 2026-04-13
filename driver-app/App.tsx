@@ -55,16 +55,9 @@ interface Route { id: string; name: string; stops: string[]; }
 interface Student { id: string; name: string; address: string; latitude?: number; longitude?: number; }
 
 // ─── API HELPERS ───────────────────────────────────────────────────────────
-const fetchWithTimeout = async (url: string, options: RequestInit = {}, ms = 10000): Promise<Response> => {
-  // Use a simpler fetch for better compatibility on some Android versions
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), ms);
-  try {
-    const response = await fetch(url, { ...options, signal: controller.signal });
-    return response;
-  } finally {
-    clearTimeout(timeoutId);
-  }
+const fetchWithTimeout = async (url: string, options: RequestInit = {}): Promise<Response> => {
+  // Removing AbortController as it was causing Network request failed on some Android versions.
+  return fetch(url, options);
 };
 
 const api = {
@@ -170,8 +163,7 @@ function LoginScreen({ onLogin }: { onLogin: (t: Tenant, b: Bus) => void }) {
 
       onLogin(match, busMatch);
     } catch (err: any) {
-      const errorStr = JSON.stringify(err, Object.getOwnPropertyNames(err));
-      setError('Connection Error: ' + errorStr);
+      setError('Connection Error. Please check if the backend is running.');
     } finally {
       setLoading(false);
     }
@@ -212,54 +204,6 @@ function LoginScreen({ onLogin }: { onLogin: (t: Tenant, b: Bus) => void }) {
             {loading ? <ActivityIndicator color="white" /> : <Text style={login.buttonText}>Start Driving</Text>}
           </TouchableOpacity>
 
-          <Text style={{ color: '#4B5563', fontSize: 10, textAlign: 'center', marginTop: 20 }}>
-            Debug Config: {API_URL}
-          </Text>
-
-          <TouchableOpacity 
-            style={{ marginTop: 10, padding: 10 }} 
-            onPress={async () => {
-              setError('Running diagnostics...');
-              try {
-                const start = Date.now();
-                await fetch('https://google.com', { mode: 'no-cors' });
-                const internetOk = `Internet: OK (${Date.now() - start}ms)`;
-                
-                let backendOk = 'Backend: FAILED';
-                try {
-                  const bStart = Date.now();
-                  const res = await fetch(`${API_URL}/tenant`);
-                  backendOk = `Backend: ${res.status} ${res.statusText} (${Date.now() - bStart}ms)`;
-                } catch (e: any) {
-                  backendOk = `Backend: FETCH ERROR (${e.message || String(e)})`;
-                  
-                  // Try XHR as fallback diagnostic
-                  try {
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('GET', `${API_URL}/tenant`, true);
-                    xhr.timeout = 5000;
-                    const xhrRes = await new Promise((resolve) => {
-                      xhr.onload = () => resolve(`XHR: ${xhr.status} OK`);
-                      xhr.onerror = () => resolve('XHR: ERROR');
-                      xhr.ontimeout = () => resolve('XHR: TIMEOUT');
-                      xhr.send();
-                    });
-                    backendOk += `\n${xhrRes}`;
-                  } catch (xe) {
-                    backendOk += '\nXHR: CRASHED';
-                  }
-                }
-                
-                setError(`${internetOk}\n${backendOk}`);
-              } catch (e: any) {
-                setError(`Internet Check Failed: ${e.message || String(e)}`);
-              }
-            }}
-          >
-            <Text style={{ color: '#10B981', fontSize: 12, textAlign: 'center', fontWeight: 'bold' }}>
-              🔍 Run Network Diagnostics
-            </Text>
-          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
